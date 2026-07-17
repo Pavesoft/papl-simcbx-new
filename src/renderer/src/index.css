@@ -1,43 +1,43 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap"); */
 
 @font-face {
-  font-family: "Rajdhani";
-  src: url("./assets/fonts/Rajdhani-Regular.ttf") format("truetype");
+  font-family: 'Rajdhani';
+  src: url('./assets/fonts/Rajdhani-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "Rajdhani";
-  src: url("./assets/fonts/Rajdhani-Bold.ttf") format("truetype");
+  font-family: 'Rajdhani';
+  src: url('./assets/fonts/Rajdhani-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "Rajdhani";
-  src: url("./assets/fonts/Rajdhani-Medium.ttf") format("truetype");
+  font-family: 'Rajdhani';
+  src: url('./assets/fonts/Rajdhani-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "Rajdhani";
-  src: url("./assets/fonts/Rajdhani-SemiBold.ttf") format("truetype");
+  font-family: 'Rajdhani';
+  src: url('./assets/fonts/Rajdhani-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "Rajdhani";
-  src: url("./assets/fonts/Rajdhani-Light.ttf") format("truetype");
+  font-family: 'Rajdhani';
+  src: url('./assets/fonts/Rajdhani-Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
 }
 
 body {
   margin: 0;
-  font-family: "Rajdhani", sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   .return-action-icon:hover .return-arrow-icon {
@@ -64,5 +64,5 @@ body {
 }
 
 code {
-  font-family: "Rajdhani", sans-serif;
+  font-family: 'Rajdhani', sans-serif;
 }

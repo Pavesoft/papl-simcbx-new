@@ -1,2 +1,2 @@
-export * from "./dumpModelSettingsToPlc";
-export * from "./readLaserMarkContent";
+export * from './dumpModelSettingsToPlc'
+export * from './readLaserMarkContent'

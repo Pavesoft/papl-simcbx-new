@@ -1,38 +1,38 @@
-import { ActionIcon, Flex } from "@mantine/core";
-import CylinderTest from "../../../components/Atoms/CylinderTest";
-import CheckComponent from "../../../components/Atoms/CheckComponent";
-import ServoPositionComponent from "../../../components/Atoms/ServoPositionComponent";
-import CameraComponent from "../../../components/Atoms/CameraComponent";
-import StatusSingleButtonComponent from "../../../components/Atoms/StatusSingleButtonComponent";
-import SpeedPositionComponent from "../../../components/Atoms/SpeedPositionComponent";
-import ServoErrorComponent from "../../../components/Atoms/ServoErrorComponent";
-import Jog from "../../../components/Atoms/Jog";
-import SingleButtonComponent from "../../../components/Atoms/SingleButtonComponent";
-import { HeadingMediumSemiBold, HeadingSmallSemiBold } from "../../../components/AllText/Text";
-import { IconArrowRight } from "@tabler/icons-react";
-import { useGlobalContext } from "../../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider";
-import ActualPosition from "../../../components/Atoms/PositionComponent";
-import { ModelSelect } from "../../../components/ModelSelect";
+import { ActionIcon, Flex } from '@mantine/core'
+import CylinderTest from '../../../components/Atoms/CylinderTest'
+import CheckComponent from '../../../components/Atoms/CheckComponent'
+import ServoPositionComponent from '../../../components/Atoms/ServoPositionComponent'
+import CameraComponent from '../../../components/Atoms/CameraComponent'
+import StatusSingleButtonComponent from '../../../components/Atoms/StatusSingleButtonComponent'
+import SpeedPositionComponent from '../../../components/Atoms/SpeedPositionComponent'
+import ServoErrorComponent from '../../../components/Atoms/ServoErrorComponent'
+import Jog from '../../../components/Atoms/Jog'
+import SingleButtonComponent from '../../../components/Atoms/SingleButtonComponent'
+import { HeadingMediumSemiBold, HeadingSmallSemiBold } from '../../../components/AllText/Text'
+import { IconArrowRight } from '@tabler/icons-react'
+import { useGlobalContext } from '../../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider'
+import ActualPosition from '../../../components/Atoms/PositionComponent'
+import { ModelSelect } from '../../../components/ModelSelect'
 
 const Manual = () => {
-  const { writeMultipleValuesToPlc } = useGlobalContext();
+  const { writeMultipleValuesToPlc } = useGlobalContext()
   return (
-    <Flex direction={"column"} bg="#0a0a0a">
+    <Flex direction={'column'} bg="#0a0a0a">
       <Flex pl={20}>
         <ModelSelect />
       </Flex>
       <Flex columnGap={20} bg="#0a0a0a" p={20}>
-        <Flex w={"25%"} direction={"column"} rowGap={12}>
-          <Flex direction={"column"}>
-            <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
+        <Flex w={'25%'} direction={'column'} rowGap={12}>
+          <Flex direction={'column'}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
               <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
                 STAGE 2
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: "0px 0px 8px 8px " }}
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
               bg="#171717"
-              w={"100%"}
+              w={'100%'}
               direction="column"
               rowGap={16}
               pt={16}
@@ -68,16 +68,16 @@ const Manual = () => {
             </Flex>
           </Flex>
           {/* STAGE 4 */}
-          <Flex direction={"column"}>
-            <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
+          <Flex direction={'column'}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
               <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
                 STAGE 4
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: "0px 0px 8px 8px " }}
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
               bg="#171717"
-              w={"100%"}
+              w={'100%'}
               direction="column"
               rowGap={16}
               pt={16}
@@ -131,17 +131,17 @@ const Manual = () => {
             </Flex>
           </Flex>
         </Flex>
-        <Flex w={"25%"} direction={"column"} rowGap={12}>
-          <Flex direction={"column"}>
-            <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
+        <Flex w={'25%'} direction={'column'} rowGap={12}>
+          <Flex direction={'column'}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
               <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
                 STAGE 3
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: "0px 0px 8px 8px " }}
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
               bg="#171717"
-              w={"100%"}
+              w={'100%'}
               direction="column"
               // style={{ border: "1px solid #ccc" }}
               rowGap={16}
@@ -175,16 +175,16 @@ const Manual = () => {
               />
             </Flex>
           </Flex>
-          <Flex direction={"column"}>
-            <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
+          <Flex direction={'column'}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
               <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
                 STAGE 6
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: "0px 0px 8px 8px " }}
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
               bg="#171717"
-              w={"100%"}
+              w={'100%'}
               direction="column"
               rowGap={16}
               pt={16}
@@ -208,16 +208,16 @@ const Manual = () => {
             </Flex>
           </Flex>
 
-          <Flex direction={"column"}>
-            <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
+          <Flex direction={'column'}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
               <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
                 INDEXING
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: "0px 0px 8px 8px " }}
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
               bg="#171717"
-              w={"100%"}
+              w={'100%'}
               direction="column"
               rowGap={16}
               pt={16}
@@ -242,10 +242,10 @@ const Manual = () => {
                         w={94}
                         h={40}
                         variant="gradient"
-                        gradient={{ from: "#3B3B3B", to: "#262626", deg: 180 }}
-                        style={{ border: "1px solid #525252" }}
+                        gradient={{ from: '#3B3B3B', to: '#262626', deg: 180 }}
+                        style={{ border: '1px solid #525252' }}
                         onClick={() => {
-                          writeMultipleValuesToPlc([{ address: "M1075", value: true }]);
+                          writeMultipleValuesToPlc([{ address: 'M1075', value: true }])
                         }}
                       >
                         <IconArrowRight color="#E5E5E5" />
@@ -261,17 +261,17 @@ const Manual = () => {
             </Flex>
           </Flex>
         </Flex>
-        <Flex w={"25%"} direction="column">
-          <Flex direction={"column"}>
-            <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
+        <Flex w={'25%'} direction="column">
+          <Flex direction={'column'}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
               <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
                 STAGE 5
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: "0px 0px 8px 8px " }}
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
               bg="#171717"
-              w={"100%"}
+              w={'100%'}
               direction="column"
               rowGap={16}
               pt={16}
@@ -357,17 +357,17 @@ const Manual = () => {
           </Flex>
         </Flex> */}
         </Flex>
-        <Flex w={"25%"} direction={"column"}>
-          <Flex direction={"column"}>
-            <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
+        <Flex w={'25%'} direction={'column'}>
+          <Flex direction={'column'}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
               <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
                 STAGE 8
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: "0px 0px 8px 8px " }}
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
               bg="#171717"
-              w={"100%"}
+              w={'100%'}
               direction="column"
               rowGap={8}
               pt={16}
@@ -408,17 +408,41 @@ const Manual = () => {
                   SERVO PLACE POSITION
                 </HeadingSmallSemiBold>
                 {/* Done */}
-                <SingleButtonComponent label="POSITION 1" buttonLabel="START" writeAddress="M1063" />
+                <SingleButtonComponent
+                  label="POSITION 1"
+                  buttonLabel="START"
+                  writeAddress="M1063"
+                />
                 {/* Done */}
-                <SingleButtonComponent label="POSITION 2" buttonLabel="START" writeAddress="M1064" />
+                <SingleButtonComponent
+                  label="POSITION 2"
+                  buttonLabel="START"
+                  writeAddress="M1064"
+                />
                 {/* Done */}
-                <SingleButtonComponent label="POSITION 3" buttonLabel="START" writeAddress="M1065" />
+                <SingleButtonComponent
+                  label="POSITION 3"
+                  buttonLabel="START"
+                  writeAddress="M1065"
+                />
                 {/* Done */}
-                <SingleButtonComponent label="POSITION 4" buttonLabel="START" writeAddress="M1066" />
+                <SingleButtonComponent
+                  label="POSITION 4"
+                  buttonLabel="START"
+                  writeAddress="M1066"
+                />
                 {/* Done */}
-                <SingleButtonComponent label="POSITION 5" buttonLabel="START" writeAddress="M1067" />
+                <SingleButtonComponent
+                  label="POSITION 5"
+                  buttonLabel="START"
+                  writeAddress="M1067"
+                />
                 {/* Done */}
-                <SingleButtonComponent label="POSITION 6" buttonLabel="START" writeAddress="M1068" />
+                <SingleButtonComponent
+                  label="POSITION 6"
+                  buttonLabel="START"
+                  writeAddress="M1068"
+                />
                 <SpeedPositionComponent
                   positionLowWordAddress="D3008"
                   positionHighWordAddress="D3009"
@@ -443,7 +467,7 @@ const Manual = () => {
         </Flex>
       </Flex>
     </Flex>
-  );
-};
+  )
+}
 
-export default Manual;
+export default Manual

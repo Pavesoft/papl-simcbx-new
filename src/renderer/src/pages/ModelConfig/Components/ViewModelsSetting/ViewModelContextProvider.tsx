@@ -1,31 +1,31 @@
-import { createContext, useContext, useEffect, type ReactNode } from "react";
-import { useForm, type UseFormReturnType } from "@mantine/form";
-import { api, unwrap } from "../../../../api";
-import type { Prisma } from "@prisma/client";
-import { successNotification } from "../../../../shared/util/successNotification";
-import { errorNotification } from "../../../../shared/util/errorNotification";
-import { useNavigate, useParams } from "react-router-dom";
-import type { ModelFormValues } from "../../modelSetting.model";
+import { createContext, useContext, useEffect, type ReactNode } from 'react'
+import { useForm, type UseFormReturnType } from '@mantine/form'
+import { api, unwrap } from '../../../../api'
+import type { Prisma } from '@prisma/client'
+import { successNotification } from '../../../../shared/util/successNotification'
+import { errorNotification } from '../../../../shared/util/errorNotification'
+import { useNavigate, useParams } from 'react-router-dom'
+import type { ModelFormValues } from '../../modelSetting.model'
 
 type ViewModelContextType = {
-  form: UseFormReturnType<ModelFormValues>;
-  handleSave: () => void;
-};
+  form: UseFormReturnType<ModelFormValues>
+  handleSave: () => void
+}
 
-const ViewModelContext = createContext<ViewModelContextType | undefined>(undefined);
+const ViewModelContext = createContext<ViewModelContextType | undefined>(undefined)
 
 export function ViewModelContextProvider({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
-  const { key, id } = useParams();
+  const navigate = useNavigate()
+  const { key, id } = useParams()
 
   useEffect(() => {
     if (id) {
       unwrap(api.modelSettings.byId({ id: id })).then((data) => {
         if (data) {
-          if (key === "duplicate-item") {
+          if (key === 'duplicate-item') {
             form.setValues({
               // ...data,
-              modelName: data.modelName + " COPY",
+              modelName: data.modelName + ' COPY',
               programNo: data.programNo,
               rejectionBin: data.rejectionBin ?? false,
               lightCurtain: data.lightCurtain ?? false,
@@ -102,9 +102,9 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
               s6SceneNo: Number(data.s6SceneNo ?? 0),
               stage7Check: data.stage7Check ?? false,
               markingCheck: data.markingCheck ?? false,
-              partNo: String(data.partNo ?? ""),
-              revNo: String(data.revNo ?? ""),
-              fileName: String(data.fileName ?? ""),
+              partNo: String(data.partNo ?? ''),
+              revNo: String(data.revNo ?? ''),
+              fileName: String(data.fileName ?? ''),
               stage8Check: data.stage8Check ?? false,
               upDownCylCheck: data.upDownCylCheck ?? false,
               upDownCylUp: data.upDownCylUp ?? false,
@@ -120,8 +120,8 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
               pressPosition3: Number(data.pressPosition3 ?? 0),
               pressPosition4: Number(data.pressPosition4 ?? 0),
               pressPosition5: Number(data.pressPosition5 ?? 0),
-              pressPosition6: Number(data.pressPosition6 ?? 0),
-            });
+              pressPosition6: Number(data.pressPosition6 ?? 0)
+            })
           } else {
             form.setValues({
               ...data,
@@ -198,9 +198,9 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
               s6SceneNo: Number(data.s6SceneNo ?? 0),
               stage7Check: data.stage7Check ?? false,
               markingCheck: data.markingCheck ?? false,
-              partNo: String(data.partNo ?? ""),
-              revNo: String(data.revNo ?? ""),
-              fileName: String(data.fileName ?? ""),
+              partNo: String(data.partNo ?? ''),
+              revNo: String(data.revNo ?? ''),
+              fileName: String(data.fileName ?? ''),
               stage8Check: data.stage8Check ?? false,
               upDownCylCheck: data.upDownCylCheck ?? false,
               upDownCylUp: data.upDownCylUp ?? false,
@@ -216,17 +216,17 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
               pressPosition3: Number(data.pressPosition3 ?? 0),
               pressPosition4: Number(data.pressPosition4 ?? 0),
               pressPosition5: Number(data.pressPosition5 ?? 0),
-              pressPosition6: Number(data.pressPosition6 ?? 0),
-            });
+              pressPosition6: Number(data.pressPosition6 ?? 0)
+            })
           }
         }
-      });
+      })
     }
-  }, [id]);
+  }, [id])
 
   const form = useForm<ModelFormValues>({
     initialValues: {
-      modelName: "",
+      modelName: '',
       programNo: 0,
       rejectionBin: true,
       lightCurtain: true,
@@ -321,9 +321,9 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
 
       stage7Check: true,
       markingCheck: true,
-      partNo: "",
-      revNo: "",
-      fileName: "",
+      partNo: '',
+      revNo: '',
+      fileName: '',
 
       stage8Check: true,
       upDownCylCheck: true,
@@ -343,91 +343,91 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
       pressPosition3: 0,
       pressPosition4: 0,
       pressPosition5: 0,
-      pressPosition6: 0,
-    },
-  });
+      pressPosition6: 0
+    }
+  })
 
   const handleSaveDetails = () => {
     if (!id) {
-      errorNotification({ title: "Error", message: "Missing model id" });
-      return;
+      errorNotification({ title: 'Error', message: 'Missing model id' })
+      return
     }
     const payload = {
       id: id as string,
-      ...form.values,
-    };
+      ...form.values
+    }
     unwrap(api.modelSettings.update(payload))
       .then(() => {
-        successNotification({ title: "Success", message: "Model Settings Saved Successfully" });
-        navigate("/model-config");
+        successNotification({ title: 'Success', message: 'Model Settings Saved Successfully' })
+        navigate('/model-config')
       })
       .catch((e) => {
-        if (e?.message && e?.message.includes("Unique constraint")) {
+        if (e?.message && e?.message.includes('Unique constraint')) {
           // Try extracting the unique constraint field with regex
-          const match = e.message.match(/Unique constraint failed on field\(s\):\s*(\S+)/);
+          const match = e.message.match(/Unique constraint failed on field\(s\):\s*(\S+)/)
           if (match) {
-            const uniqueConstraintField = match[1];
+            const uniqueConstraintField = match[1]
             errorNotification({
-              title: "Error",
-              message: `${uniqueConstraintField} already exists. Please use a different value.`,
-            });
+              title: 'Error',
+              message: `${uniqueConstraintField} already exists. Please use a different value.`
+            })
           } else {
-            errorNotification({ title: "Error", message: "Something went wrong" });
+            errorNotification({ title: 'Error', message: 'Something went wrong' })
           }
         } else {
-          console.error("Unexpected error:", e); // Log unexpected errors for debugging
-          errorNotification({ title: "Error", message: "Something went wrong" });
+          console.error('Unexpected error:', e) // Log unexpected errors for debugging
+          errorNotification({ title: 'Error', message: 'Something went wrong' })
         }
-      });
-  };
+      })
+  }
   const handleDuplicateItem = () => {
     const payload: Prisma.ModelSettingCreateInput = {
       ...form.values,
-      id: undefined, // Ensure id is not included in the create payload
-    };
+      id: undefined // Ensure id is not included in the create payload
+    }
 
     unwrap(api.modelSettings.create(payload))
       .then(() => {
-        close();
-        successNotification({ title: "Success", message: "Model Settings Saved Successfully" });
-        navigate("/model-config");
+        close()
+        successNotification({ title: 'Success', message: 'Model Settings Saved Successfully' })
+        navigate('/model-config')
       })
       .catch((e) => {
-        if (e?.message && e?.message.includes("Unique constraint")) {
+        if (e?.message && e?.message.includes('Unique constraint')) {
           // Try extracting the unique constraint field with regex
-          const match = e.message.match(/Unique constraint failed on field\(s\):\s*(\S+)/);
+          const match = e.message.match(/Unique constraint failed on field\(s\):\s*(\S+)/)
           if (match) {
-            const uniqueConstraintField = match[1];
+            const uniqueConstraintField = match[1]
             errorNotification({
-              title: "Error",
-              message: `${uniqueConstraintField} already exists. Please use a different value.`,
-            });
+              title: 'Error',
+              message: `${uniqueConstraintField} already exists. Please use a different value.`
+            })
           } else {
-            errorNotification({ title: "Error", message: "Something went wrong" });
+            errorNotification({ title: 'Error', message: 'Something went wrong' })
           }
         } else {
-          console.error("Unexpected error:", e); // Log unexpected errors for debugging
-          errorNotification({ title: "Error", message: "Something went wrong" });
+          console.error('Unexpected error:', e) // Log unexpected errors for debugging
+          errorNotification({ title: 'Error', message: 'Something went wrong' })
         }
-      });
-  };
+      })
+  }
   const handleSave = () => {
-    if (key === "duplicate-item") {
-      handleDuplicateItem();
+    if (key === 'duplicate-item') {
+      handleDuplicateItem()
     } else {
-      handleSaveDetails();
+      handleSaveDetails()
     }
-  };
+  }
 
-  const value: ViewModelContextType = { form, handleSave };
+  const value: ViewModelContextType = { form, handleSave }
 
-  return <ViewModelContext.Provider value={value}>{children}</ViewModelContext.Provider>;
+  return <ViewModelContext.Provider value={value}>{children}</ViewModelContext.Provider>
 }
 
 export function useViewModelContext() {
-  const context = useContext(ViewModelContext);
+  const context = useContext(ViewModelContext)
   if (!context) {
-    throw new Error("useUserContext must be used within a UserContextProvider");
+    throw new Error('useUserContext must be used within a UserContextProvider')
   }
-  return context;
+  return context
 }

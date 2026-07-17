@@ -21,7 +21,10 @@ function stringifyValueForPLCLog(value: unknown): string {
   }
 }
 
-export function appendLineToPLCServiceLogFile(level: 'INFO' | 'WARN' | 'ERROR', message: string): void {
+export function appendLineToPLCServiceLogFile(
+  level: 'INFO' | 'WARN' | 'ERROR',
+  message: string
+): void {
   const line = `${new Date().toISOString()} [${level}] ${message}\n`
 
   try {

@@ -1,7 +1,7 @@
-import { createContext } from "react";
+import { createContext } from 'react'
 
 export type AutoContextType = {
-  barcodeScanResult: string | null;
-};
+  barcodeScanResult: string | null
+}
 
-export const AutoContext = createContext<AutoContextType | undefined>(undefined);
+export const AutoContext = createContext<AutoContextType | undefined>(undefined)

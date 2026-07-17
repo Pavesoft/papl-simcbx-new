@@ -39,7 +39,10 @@ export async function updateModelSerialNumber(input: {
     orderBy: { date: 'desc' }
   })
 
-  if (latest && latest.date.toISOString().slice(0, 10) === new Date(date).toISOString().slice(0, 10)) {
+  if (
+    latest &&
+    latest.date.toISOString().slice(0, 10) === new Date(date).toISOString().slice(0, 10)
+  ) {
     return serialize(
       await prisma.modelSerialNumber.update({
         where: { id: latest.id },

@@ -1,17 +1,17 @@
-import { Button, Flex, NumberInput, Text } from "@mantine/core";
-import { convertFloatToWord, convertIntToWord } from "../../shared/util/general.util";
-import { useState } from "react";
-import { useGlobalContext } from "../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider";
+import { Button, Flex, NumberInput, Text } from '@mantine/core'
+import { convertFloatToWord, convertIntToWord } from '../../shared/util/general.util'
+import { useState } from 'react'
+import { useGlobalContext } from '../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider'
 
 type ComponentProps = {
-  positionLowWordAddress: string;
-  positionHighWordAddress: string;
-  speedLowWordAddress: string;
-  speedHighWordAddress: string;
-  goBtnWriteAddress: string;
-  speedMax?: number;
-  positionMax?: number;
-};
+  positionLowWordAddress: string
+  positionHighWordAddress: string
+  speedLowWordAddress: string
+  speedHighWordAddress: string
+  goBtnWriteAddress: string
+  speedMax?: number
+  positionMax?: number
+}
 
 const SpeedPositionComponent = ({
   positionLowWordAddress,
@@ -20,12 +20,12 @@ const SpeedPositionComponent = ({
   speedHighWordAddress,
   goBtnWriteAddress,
   speedMax,
-  positionMax,
+  positionMax
 }: ComponentProps) => {
-  const [position, setPosition] = useState<number>(0);
-  const [speed, setSpeed] = useState<number>(0);
+  const [position, setPosition] = useState<number>(0)
+  const [speed, setSpeed] = useState<number>(0)
 
-  const { writeMultipleValuesToPlc } = useGlobalContext();
+  const { writeMultipleValuesToPlc } = useGlobalContext()
 
   return (
     <Flex direction="column" pl={16} pr={16} rowGap={12}>
@@ -42,15 +42,15 @@ const SpeedPositionComponent = ({
             decimalScale={3}
             styles={{
               input: {
-                borderColor: "#737373",
-                backgroundColor: "#F5F5F5",
-                fontSize: "20px",
+                borderColor: '#737373',
+                backgroundColor: '#F5F5F5',
+                fontSize: '20px',
                 fontWeight: 600,
-                color: "#3F3F47",
+                color: '#3F3F47'
               },
               label: {
-                fontSize: "24px",
-              },
+                fontSize: '24px'
+              }
             }}
             value={position}
             onChange={(value) => setPosition(Number(value))}
@@ -71,15 +71,15 @@ const SpeedPositionComponent = ({
             w={148}
             styles={{
               input: {
-                borderColor: "#737373",
-                backgroundColor: "#F5F5F5",
-                fontSize: "20px",
+                borderColor: '#737373',
+                backgroundColor: '#F5F5F5',
+                fontSize: '20px',
                 fontWeight: 600,
-                color: "#3F3F47",
+                color: '#3F3F47'
               },
               label: {
-                fontSize: "24px",
-              },
+                fontSize: '24px'
+              }
             }}
             value={speed}
             onChange={(value) => setSpeed(Number(value))}
@@ -93,29 +93,31 @@ const SpeedPositionComponent = ({
           h={36}
           mt={8}
           className="jog-button"
-          style={{ border: "1px solid #525252" }}
+          style={{ border: '1px solid #525252' }}
           onMouseDown={() => {
-            const { low: positionLowWord, high: positionHighWord } = convertIntToWord(position * 1000);
-            const { low: speedLowWord, high: speedHighWord } = convertFloatToWord(speed);
+            const { low: positionLowWord, high: positionHighWord } = convertIntToWord(
+              position * 1000
+            )
+            const { low: speedLowWord, high: speedHighWord } = convertFloatToWord(speed)
 
             writeMultipleValuesToPlc([
-              { address: "D669", value: 0 },
+              { address: 'D669', value: 0 },
               { address: positionLowWordAddress, value: positionLowWord },
               { address: positionHighWordAddress, value: positionHighWord },
               { address: speedLowWordAddress, value: speedLowWord },
               { address: speedHighWordAddress, value: speedHighWord },
-              { address: goBtnWriteAddress, value: true },
-            ]);
+              { address: goBtnWriteAddress, value: true }
+            ])
           }}
           onMouseUp={() => {
-            writeMultipleValuesToPlc([{ address: goBtnWriteAddress, value: false }]);
+            writeMultipleValuesToPlc([{ address: goBtnWriteAddress, value: false }])
           }}
         >
           GO
         </Button>
       </Flex>
     </Flex>
-  );
-};
+  )
+}
 
-export default SpeedPositionComponent;
+export default SpeedPositionComponent

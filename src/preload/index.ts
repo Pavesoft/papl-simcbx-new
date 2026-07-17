@@ -1,13 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { IPC } from '@shared/ipc.types'
-import type {
-  ModelSerialNumber,
-  ModelSetting,
-  PartData,
-  PortalUser,
-  Prisma
-} from '@prisma/client'
+import type { ModelSerialNumber, ModelSetting, PartData, PortalUser, Prisma } from '@prisma/client'
 import type {
   DbResult,
   ExportToExcelResult,
@@ -45,12 +39,15 @@ const api = {
   },
 
   adminUser: {
-    create: (input: Prisma.PortalUserCreateInput & { password: string }): Promise<DbResult<PortalUser>> =>
-      ipcRenderer.invoke(IPC.USER_CREATE, input),
+    create: (
+      input: Prisma.PortalUserCreateInput & { password: string }
+    ): Promise<DbResult<PortalUser>> => ipcRenderer.invoke(IPC.USER_CREATE, input),
     update: (
       input: Prisma.PortalUserUpdateInput & { id: string; password?: string }
     ): Promise<DbResult<PortalUser>> => ipcRenderer.invoke(IPC.USER_UPDATE, input),
-    updateModelSettings: (input: Prisma.PortalUserUpdateInput): Promise<DbResult<{ count: number }>> =>
+    updateModelSettings: (
+      input: Prisma.PortalUserUpdateInput
+    ): Promise<DbResult<{ count: number }>> =>
       ipcRenderer.invoke(IPC.USER_UPDATE_MODEL_SETTINGS, input),
     list: (): Promise<DbResult<PortalUser[]>> => ipcRenderer.invoke(IPC.USER_LIST),
     byId: (input: { id: string }): Promise<DbResult<PortalUser | null>> =>
@@ -65,8 +62,9 @@ const api = {
     list: (): Promise<DbResult<ModelSetting[]>> => ipcRenderer.invoke(IPC.MODEL_SETTING_LIST),
     byId: (input: { id: string }): Promise<DbResult<ModelSetting | null>> =>
       ipcRenderer.invoke(IPC.MODEL_SETTING_BY_ID, input),
-    update: (input: Prisma.ModelSettingUpdateInput & { id: string }): Promise<DbResult<ModelSetting>> =>
-      ipcRenderer.invoke(IPC.MODEL_SETTING_UPDATE, input),
+    update: (
+      input: Prisma.ModelSettingUpdateInput & { id: string }
+    ): Promise<DbResult<ModelSetting>> => ipcRenderer.invoke(IPC.MODEL_SETTING_UPDATE, input),
     delete: (input: { id: string }): Promise<DbResult<ModelSetting>> =>
       ipcRenderer.invoke(IPC.MODEL_SETTING_DELETE, input)
   },
@@ -111,8 +109,11 @@ const api = {
 
   laser: {
     ready: (): Promise<LaserReadyResult> => ipcRenderer.invoke(IPC.LASER_READY),
-    mark: (input: { template: string; markName: string; content: string }): Promise<LaserMarkResult> =>
-      ipcRenderer.invoke(IPC.LASER_MARK, input),
+    mark: (input: {
+      template: string
+      markName: string
+      content: string
+    }): Promise<LaserMarkResult> => ipcRenderer.invoke(IPC.LASER_MARK, input),
     onStatus: subscribe<string>(IPC.LASER_STATUS)
   },
 

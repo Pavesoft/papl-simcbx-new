@@ -36,9 +36,13 @@ export function registerDbIpc(): void {
   // part data
   handleWithEnvelope(IPC.PART_DATA_CREATE, partData.createPartData)
   handleWithEnvelope(IPC.PART_DATA_LIST, partData.listPartData)
-  handleWithEnvelope(IPC.PART_DATA_BY_ID, (input: { id: number }) => partData.getPartDataById(input.id))
+  handleWithEnvelope(IPC.PART_DATA_BY_ID, (input: { id: number }) =>
+    partData.getPartDataById(input.id)
+  )
   handleWithEnvelope(IPC.PART_DATA_UPDATE, partData.updatePartData)
-  handleWithEnvelope(IPC.PART_DATA_DELETE, (input: { id: number }) => partData.deletePartData(input.id))
+  handleWithEnvelope(IPC.PART_DATA_DELETE, (input: { id: number }) =>
+    partData.deletePartData(input.id)
+  )
 
   // model serial numbers
   handleWithEnvelope(IPC.SERIAL_CREATE, serials.createModelSerialNumber)

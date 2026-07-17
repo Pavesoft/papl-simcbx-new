@@ -1,5 +1,5 @@
 function ForwardButton() {
-  return <div>ForwardButton</div>;
+  return <div>ForwardButton</div>
 }
 
-export default ForwardButton;
+export default ForwardButton

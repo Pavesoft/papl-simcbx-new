@@ -1,30 +1,35 @@
-import { ActionIcon, Button, Flex, Indicator } from "@mantine/core";
-import { IconSmartHome } from "@tabler/icons-react";
-import { useGlobalContext } from "../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider";
-import { HeadingMediumSemiBold } from "../AllText/Text";
+import { ActionIcon, Button, Flex, Indicator } from '@mantine/core'
+import { IconSmartHome } from '@tabler/icons-react'
+import { useGlobalContext } from '../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider'
+import { HeadingMediumSemiBold } from '../AllText/Text'
 
 type ComponentProps = {
-  label: string;
-  initialWriteAddress: string;
-  pressWriteAddress: string;
-  loadWriteAddress: string;
-  homeWriteAddress: string;
-  opHealthAddress: string;
-};
+  label: string
+  initialWriteAddress: string
+  pressWriteAddress: string
+  loadWriteAddress: string
+  homeWriteAddress: string
+  opHealthAddress: string
+}
 const ServoPositionComponent = ({
   label,
   opHealthAddress,
   homeWriteAddress,
   loadWriteAddress,
   initialWriteAddress,
-  pressWriteAddress,
+  pressWriteAddress
 }: ComponentProps) => {
-  const { writeMultipleValuesToPlc, readValueFromPlc } = useGlobalContext();
+  const { writeMultipleValuesToPlc, readValueFromPlc } = useGlobalContext()
   return (
     <Flex direction="column" pl={16} pr={16} rowGap={24}>
       <Flex w="100%" justify="space-between">
         <Flex columnGap={12}>
-          <Indicator color={readValueFromPlc(opHealthAddress) ? "green" : "red"} size={12} processing mt={14} />
+          <Indicator
+            color={readValueFromPlc(opHealthAddress) ? 'green' : 'red'}
+            size={12}
+            processing
+            mt={14}
+          />
           <HeadingMediumSemiBold color="#F0E9F1">{label}</HeadingMediumSemiBold>
         </Flex>
         <Flex>
@@ -33,18 +38,26 @@ const ServoPositionComponent = ({
               <Button
                 w={94}
                 className="jog-button"
-                style={{ border: "1px solid #525252" }}
-                onMouseDown={() => writeMultipleValuesToPlc([{ address: initialWriteAddress, value: true }])}
-                onMouseUp={() => writeMultipleValuesToPlc([{ address: initialWriteAddress, value: false }])}
+                style={{ border: '1px solid #525252' }}
+                onMouseDown={() =>
+                  writeMultipleValuesToPlc([{ address: initialWriteAddress, value: true }])
+                }
+                onMouseUp={() =>
+                  writeMultipleValuesToPlc([{ address: initialWriteAddress, value: false }])
+                }
               >
                 INITIAL
               </Button>
               <Button
                 w={94}
                 className="jog-button"
-                style={{ border: "1px solid #525252" }}
-                onMouseDown={() => writeMultipleValuesToPlc([{ address: pressWriteAddress, value: true }])}
-                onMouseUp={() => writeMultipleValuesToPlc([{ address: pressWriteAddress, value: false }])}
+                style={{ border: '1px solid #525252' }}
+                onMouseDown={() =>
+                  writeMultipleValuesToPlc([{ address: pressWriteAddress, value: true }])
+                }
+                onMouseUp={() =>
+                  writeMultipleValuesToPlc([{ address: pressWriteAddress, value: false }])
+                }
               >
                 PRESS
               </Button>
@@ -53,9 +66,13 @@ const ServoPositionComponent = ({
               <Button
                 className="jog-button"
                 w={94}
-                style={{ border: "1px solid #525252" }}
-                onMouseDown={() => writeMultipleValuesToPlc([{ address: loadWriteAddress, value: true }])}
-                onMouseUp={() => writeMultipleValuesToPlc([{ address: loadWriteAddress, value: false }])}
+                style={{ border: '1px solid #525252' }}
+                onMouseDown={() =>
+                  writeMultipleValuesToPlc([{ address: loadWriteAddress, value: true }])
+                }
+                onMouseUp={() =>
+                  writeMultipleValuesToPlc([{ address: loadWriteAddress, value: false }])
+                }
               >
                 LOAD
               </Button>
@@ -64,9 +81,13 @@ const ServoPositionComponent = ({
                 w={94}
                 h={36}
                 className="jog-button"
-                style={{ border: "1px solid #525252" }}
-                onMouseDown={() => writeMultipleValuesToPlc([{ address: homeWriteAddress, value: true }])}
-                onMouseUp={() => writeMultipleValuesToPlc([{ address: homeWriteAddress, value: false }])}
+                style={{ border: '1px solid #525252' }}
+                onMouseDown={() =>
+                  writeMultipleValuesToPlc([{ address: homeWriteAddress, value: true }])
+                }
+                onMouseUp={() =>
+                  writeMultipleValuesToPlc([{ address: homeWriteAddress, value: false }])
+                }
               >
                 <IconSmartHome color="#E5E5E5" />
               </ActionIcon>
@@ -75,7 +96,7 @@ const ServoPositionComponent = ({
         </Flex>
       </Flex>
     </Flex>
-  );
-};
+  )
+}
 
-export default ServoPositionComponent;
+export default ServoPositionComponent

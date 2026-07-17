@@ -44,7 +44,10 @@ export class LaserClient extends EventEmitter {
 
   private pendingResponses: PendingResponse[] = []
 
-  constructor({ host = LASER_MARKER_DEVICE_IP, port = LASER_MARKER_DEVICE_PORT }: LaserMarkerOptions) {
+  constructor({
+    host = LASER_MARKER_DEVICE_IP,
+    port = LASER_MARKER_DEVICE_PORT
+  }: LaserMarkerOptions) {
     super()
     this.host = host
     this.port = port
@@ -137,7 +140,10 @@ export class LaserClient extends EventEmitter {
     this.client.write(payload)
   }
 
-  private waitForResponse(matcher: (msg: string) => boolean, timeoutMs: number = 20000): Promise<string> {
+  private waitForResponse(
+    matcher: (msg: string) => boolean,
+    timeoutMs: number = 20000
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         this.pendingResponses = this.pendingResponses.filter((p) => p.timeout !== timeout)

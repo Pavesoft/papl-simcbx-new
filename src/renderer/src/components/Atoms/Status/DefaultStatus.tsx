@@ -1,4 +1,4 @@
-import { Flex } from "@mantine/core";
+import { Flex } from '@mantine/core'
 
 const DefaultStatus = () => {
   return (
@@ -11,10 +11,10 @@ const DefaultStatus = () => {
         boxShadow: `
                 0px 1.25px 1.88px 0px #00000080 inset,
                 0px 0.63px 0px 0px #FFFFFF4D
-            `,
+            `
       }}
     />
-  );
-};
+  )
+}
 
-export default DefaultStatus;
+export default DefaultStatus

@@ -1,17 +1,17 @@
-import { ActionIcon, Flex, Indicator, Text } from "@mantine/core";
-import resistanceActiveIcon from "../../assets/svg/resistance.svg";
-import { useGlobalContext } from "../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider";
-import { convert2WordstoFloat } from "../../shared/util/general.util";
-import { HeadingMediumSemiBold } from "../AllText/Text";
+import { ActionIcon, Flex, Indicator, Text } from '@mantine/core'
+import resistanceActiveIcon from '../../assets/svg/resistance.svg'
+import { useGlobalContext } from '../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider'
+import { convert2WordstoFloat } from '../../shared/util/general.util'
+import { HeadingMediumSemiBold } from '../AllText/Text'
 
 type ComponentProps = {
-  label: string;
-  writeAddress?: string;
-  opHealthAddress?: string;
-  lowWordAddress?: string;
-  highWordAddress?: string;
-  unit: string;
-};
+  label: string
+  writeAddress?: string
+  opHealthAddress?: string
+  lowWordAddress?: string
+  highWordAddress?: string
+  unit: string
+}
 
 const CheckComponent = ({
   label,
@@ -19,24 +19,28 @@ const CheckComponent = ({
   writeAddress,
   lowWordAddress,
   highWordAddress,
-  unit,
+  unit
 }: ComponentProps) => {
-  const { writeMultipleValuesToPlc, readValueFromPlc } = useGlobalContext();
+  const { writeMultipleValuesToPlc, readValueFromPlc } = useGlobalContext()
 
   // Compute resistance value once before render
   const resistanceValue =
     lowWordAddress && highWordAddress
       ? convert2WordstoFloat(
-          typeof readValueFromPlc(lowWordAddress) === "number" ? (readValueFromPlc(lowWordAddress) as number) : 0,
-          typeof readValueFromPlc(highWordAddress) === "number" ? (readValueFromPlc(highWordAddress) as number) : 0
+          typeof readValueFromPlc(lowWordAddress) === 'number'
+            ? (readValueFromPlc(lowWordAddress) as number)
+            : 0,
+          typeof readValueFromPlc(highWordAddress) === 'number'
+            ? (readValueFromPlc(highWordAddress) as number)
+            : 0
         )
-      : 0;
+      : 0
 
   return (
     <Flex w="100%" justify="space-between" pl={16} pr={16}>
       <Flex align="center" columnGap={12}>
         <Indicator
-          color={opHealthAddress && readValueFromPlc(opHealthAddress) ? "green" : "red"}
+          color={opHealthAddress && readValueFromPlc(opHealthAddress) ? 'green' : 'red'}
           size={12}
           processing
         />
@@ -50,19 +54,32 @@ const CheckComponent = ({
             w={44}
             h={36}
             className="jog-button"
-            style={{ border: "1px solid #525252" }}
+            style={{ border: '1px solid #525252' }}
             onMouseDown={() => {
-              if (writeAddress) writeMultipleValuesToPlc([{ address: writeAddress, value: true }]);
+              if (writeAddress) writeMultipleValuesToPlc([{ address: writeAddress, value: true }])
             }}
             onMouseUp={() => {
-              if (writeAddress) writeMultipleValuesToPlc([{ address: writeAddress, value: false }]);
+              if (writeAddress) writeMultipleValuesToPlc([{ address: writeAddress, value: false }])
             }}
           >
-            <img className="return-action-icon" src={resistanceActiveIcon} alt="Resistance" width={24} height={24} />
+            <img
+              className="return-action-icon"
+              src={resistanceActiveIcon}
+              alt="Resistance"
+              width={24}
+              height={24}
+            />
           </ActionIcon>
 
           <Flex direction="column">
-            <Flex w={110} h={36} bg="#262626" justify="center" align="center" style={{ borderRadius: "4px" }}>
+            <Flex
+              w={110}
+              h={36}
+              bg="#262626"
+              justify="center"
+              align="center"
+              style={{ borderRadius: '4px' }}
+            >
               <Text size="26px" c="#737373" fw={600}>
                 {resistanceValue}
               </Text>
@@ -74,7 +91,7 @@ const CheckComponent = ({
         </Flex>
       </Flex>
     </Flex>
-  );
-};
+  )
+}
 
-export default CheckComponent;
+export default CheckComponent

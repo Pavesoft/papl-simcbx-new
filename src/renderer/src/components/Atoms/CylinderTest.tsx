@@ -1,38 +1,44 @@
-import { ActionIcon, Flex, Indicator, rem } from "@mantine/core";
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
-import { useGlobalContext } from "../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider";
-import { HeadingMediumSemiBold } from "../AllText/Text";
+import { ActionIcon, Flex, Indicator, rem } from '@mantine/core'
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react'
+import { useGlobalContext } from '../../shared/ContextProviders/GlobalContextProvider/GlobalContextProvider'
+import { HeadingMediumSemiBold } from '../AllText/Text'
 
 // Utility to convert octal PLC address to decimal
 // Note: This will only work for X addresses
 const convertOctalXValuesToDecimal = (addr: string): string => {
-  const prefix = addr.charAt(0); // e.g., "X"
-  const octalPart = addr.slice(1);
-  const decimal = parseInt(octalPart, 8);
+  const prefix = addr.charAt(0) // e.g., "X"
+  const octalPart = addr.slice(1)
+  const decimal = parseInt(octalPart, 8)
   if (isNaN(decimal)) {
-    throw new Error(`Invalid PLC address: ${addr}`);
+    throw new Error(`Invalid PLC address: ${addr}`)
   }
-  return `${prefix}${decimal}`;
-};
+  return `${prefix}${decimal}`
+}
 type ComponentProps = {
-  label: string;
-  writeAddress: string;
-  opHealthAddress: string;
-  reedFwdAddress: string;
-  reedRetAddress: string;
-};
+  label: string
+  writeAddress: string
+  opHealthAddress: string
+  reedFwdAddress: string
+  reedRetAddress: string
+}
 
-const CylinderTest = ({ label, writeAddress, opHealthAddress, reedFwdAddress, reedRetAddress }: ComponentProps) => {
-  const { writeMultipleValuesToPlc, readValueFromPlc } = useGlobalContext();
+const CylinderTest = ({
+  label,
+  writeAddress,
+  opHealthAddress,
+  reedFwdAddress,
+  reedRetAddress
+}: ComponentProps) => {
+  const { writeMultipleValuesToPlc, readValueFromPlc } = useGlobalContext()
 
-  const reedFwd = readValueFromPlc(convertOctalXValuesToDecimal(reedFwdAddress));
-  const reedRet = readValueFromPlc(convertOctalXValuesToDecimal(reedRetAddress));
-  const opHealth = readValueFromPlc(opHealthAddress);
+  const reedFwd = readValueFromPlc(convertOctalXValuesToDecimal(reedFwdAddress))
+  const reedRet = readValueFromPlc(convertOctalXValuesToDecimal(reedRetAddress))
+  const opHealth = readValueFromPlc(opHealthAddress)
 
   return (
     <Flex w="100%" justify="space-between" pl={16} pr={16}>
       <Flex align="center" columnGap={12}>
-        <Indicator color={opHealth ? "green" : "red"} size={12} processing />
+        <Indicator color={opHealth ? 'green' : 'red'} size={12} processing />
         <HeadingMediumSemiBold color="#F0E9F1">{label}</HeadingMediumSemiBold>
       </Flex>
       <Flex>
@@ -44,7 +50,7 @@ const CylinderTest = ({ label, writeAddress, opHealthAddress, reedFwdAddress, re
               style={{
                 height: rem(6),
                 borderRadius: rem(20),
-                background: reedRet ? "#F7945F" : "#D0D0D0",
+                background: reedRet ? '#F7945F' : '#D0D0D0'
               }}
             />
             <ActionIcon
@@ -52,10 +58,10 @@ const CylinderTest = ({ label, writeAddress, opHealthAddress, reedFwdAddress, re
               w={52}
               h={40}
               variant="gradient"
-              style={{ border: "1px solid #525252" }}
-              gradient={{ from: "#3B3B3B", to: "#262626", deg: 180 }}
+              style={{ border: '1px solid #525252' }}
+              gradient={{ from: '#3B3B3B', to: '#262626', deg: 180 }}
               onClick={() => {
-                writeMultipleValuesToPlc([{ address: writeAddress, value: false }]);
+                writeMultipleValuesToPlc([{ address: writeAddress, value: false }])
               }}
             >
               <IconArrowLeft color="#E5E5E5" />
@@ -68,7 +74,7 @@ const CylinderTest = ({ label, writeAddress, opHealthAddress, reedFwdAddress, re
               style={{
                 height: rem(6),
                 borderRadius: rem(20),
-                background: reedFwd ? "#F7945F" : "#D0D0D0",
+                background: reedFwd ? '#F7945F' : '#D0D0D0'
               }}
             />
             <ActionIcon
@@ -76,10 +82,10 @@ const CylinderTest = ({ label, writeAddress, opHealthAddress, reedFwdAddress, re
               w={52}
               h={40}
               variant="gradient"
-              gradient={{ from: "#3B3B3B", to: "#262626", deg: 180 }}
-              style={{ border: "1px solid #525252" }}
+              gradient={{ from: '#3B3B3B', to: '#262626', deg: 180 }}
+              style={{ border: '1px solid #525252' }}
               onClick={() => {
-                writeMultipleValuesToPlc([{ address: writeAddress, value: true }]);
+                writeMultipleValuesToPlc([{ address: writeAddress, value: true }])
               }}
             >
               <IconArrowRight color="#E5E5E5" />
@@ -88,7 +94,7 @@ const CylinderTest = ({ label, writeAddress, opHealthAddress, reedFwdAddress, re
         </Flex>
       </Flex>
     </Flex>
-  );
-};
+  )
+}
 
-export default CylinderTest;
+export default CylinderTest

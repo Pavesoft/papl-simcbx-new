@@ -209,7 +209,7 @@
 // export default PLCTest;
 
 function PLCTest() {
-  return <div>PLCTest</div>;
+  return <div>PLCTest</div>
 }
 
-export default PLCTest;
+export default PLCTest

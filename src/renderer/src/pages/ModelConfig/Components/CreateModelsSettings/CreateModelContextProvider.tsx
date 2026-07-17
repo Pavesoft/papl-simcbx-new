@@ -1,29 +1,29 @@
-import { createContext, useContext, type ReactNode } from "react";
-import { useForm, type UseFormReturnType } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button, Text, Flex } from "@mantine/core";
-import { api, unwrap } from "../../../../api";
-import type { Prisma } from "@prisma/client";
-import { successNotification } from "../../../../shared/util/successNotification";
-import { errorNotification } from "../../../../shared/util/errorNotification";
-import { useNavigate } from "react-router-dom";
-import type { ModelFormValues } from "../../modelSetting.model";
+import { createContext, useContext, type ReactNode } from 'react'
+import { useForm, type UseFormReturnType } from '@mantine/form'
+import { useDisclosure } from '@mantine/hooks'
+import { Modal, Button, Text, Flex } from '@mantine/core'
+import { api, unwrap } from '../../../../api'
+import type { Prisma } from '@prisma/client'
+import { successNotification } from '../../../../shared/util/successNotification'
+import { errorNotification } from '../../../../shared/util/errorNotification'
+import { useNavigate } from 'react-router-dom'
+import type { ModelFormValues } from '../../modelSetting.model'
 
 type CreateModelContextType = {
-  form: UseFormReturnType<ModelFormValues>;
-  handleSave: () => void;
-};
+  form: UseFormReturnType<ModelFormValues>
+  handleSave: () => void
+}
 
-const CreateModelContext = createContext<CreateModelContextType | undefined>(undefined);
+const CreateModelContext = createContext<CreateModelContextType | undefined>(undefined)
 
 export function CreateModelContextProvider({ children }: { children: ReactNode }) {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [openedValidation, { open: openValidation, close: closeValidation }] = useDisclosure(false);
-  const navigate = useNavigate();
+  const [opened, { open, close }] = useDisclosure(false)
+  const [openedValidation, { open: openValidation, close: closeValidation }] = useDisclosure(false)
+  const navigate = useNavigate()
 
   const form = useForm<ModelFormValues>({
     initialValues: {
-      modelName: "",
+      modelName: '',
       programNo: 0,
       rejectionBin: true,
       lightCurtain: true,
@@ -124,9 +124,9 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
 
       stage7Check: true,
       markingCheck: true,
-      partNo: "",
-      revNo: "",
-      fileName: "",
+      partNo: '',
+      revNo: '',
+      fileName: '',
 
       stage8Check: true,
       upDownCylCheck: true,
@@ -146,9 +146,9 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
       pressPosition3: 0,
       pressPosition4: 0,
       pressPosition5: 0,
-      pressPosition6: 0,
-    },
-  });
+      pressPosition6: 0
+    }
+  })
 
   const handleSave = () => {
     if (
@@ -163,28 +163,28 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
       form.values.s5Cb2BrushFullLoadMax <= form.values.s5Cb2BrushFullLoadMin ||
       !form.values.fileName
     ) {
-      openValidation();
+      openValidation()
     } else {
-      open();
+      open()
     }
-  };
+  }
 
   const handleSaveDetails = () => {
     const payload: Prisma.ModelSettingCreateInput = {
-      ...form.values,
-    };
+      ...form.values
+    }
     unwrap(api.modelSettings.create(payload))
       .then(() => {
-        close();
-        successNotification({ title: "Success", message: "Model Settings Saved Successfully" });
-        navigate("/model-config");
+        close()
+        successNotification({ title: 'Success', message: 'Model Settings Saved Successfully' })
+        navigate('/model-config')
       })
       .catch(() => {
-        errorNotification({ title: "Error", message: "Something went wrong" });
-      });
-  };
+        errorNotification({ title: 'Error', message: 'Something went wrong' })
+      })
+  }
 
-  const value: CreateModelContextType = { form, handleSave };
+  const value: CreateModelContextType = { form, handleSave }
 
   // return <CreateModelContext.Provider value={value}>{children}</CreateModelContext.Provider>;
 
@@ -213,8 +213,8 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
         </Text>
         <Flex wrap="wrap" gap="md">
           {Array.from({ length: 8 }, (_, i) => i + 1).map((stage) => {
-            const field = `stage${stage}Check` as keyof ModelFormValues;
-            const selected = form.values[field];
+            const field = `stage${stage}Check` as keyof ModelFormValues
+            const selected = form.values[field]
 
             return (
               <Flex
@@ -225,30 +225,36 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
                   width: 42,
                   height: 42,
                   borderRadius: 100,
-                  backgroundColor: selected ? "#F27B4880" : "#404040",
-                  border: selected ? "1px solid #F27B48" : "1px solid #60666B",
-                  marginRight: 16,
+                  backgroundColor: selected ? '#F27B4880' : '#404040',
+                  border: selected ? '1px solid #F27B48' : '1px solid #60666B',
+                  marginRight: 16
                 }}
               >
-                <Text size="xl" fw={600} c={selected ? "#FFFBF7" : "#A1A1A1"}>
+                <Text size="xl" fw={600} c={selected ? '#FFFBF7' : '#A1A1A1'}>
                   {stage}
                 </Text>
               </Flex>
-            );
+            )
           })}
         </Flex>
 
-        <Flex mt={32} justify={"flex-end"}>
+        <Flex mt={32} justify={'flex-end'}>
           <Button
             variant="gradient"
-            gradient={{ from: "#F27B48", to: "#B4522E", deg: 180 }}
+            gradient={{ from: '#F27B48', to: '#B4522E', deg: 180 }}
             onClick={() => handleSaveDetails()}
           >
             YES, CREATE
           </Button>
         </Flex>
       </Modal>
-      <Modal opened={openedValidation} onClose={closeValidation} withCloseButton={false} size="lg" c="#F5F5F5">
+      <Modal
+        opened={openedValidation}
+        onClose={closeValidation}
+        withCloseButton={false}
+        size="lg"
+        c="#F5F5F5"
+      >
         {!form.values.modelName && (
           <Text size="xl" fw={600} c="#FF000C">
             Model Name is required
@@ -300,10 +306,10 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
           </Text>
         )}
 
-        <Flex mt={32} justify={"flex-end"}>
+        <Flex mt={32} justify={'flex-end'}>
           <Button
             variant="gradient"
-            gradient={{ from: "#F27B48", to: "#B4522E", deg: 180 }}
+            gradient={{ from: '#F27B48', to: '#B4522E', deg: 180 }}
             onClick={() => closeValidation()}
           >
             CLOSE
@@ -311,13 +317,13 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
         </Flex>
       </Modal>
     </CreateModelContext.Provider>
-  );
+  )
 }
 
 export function useCreateModelContext() {
-  const context = useContext(CreateModelContext);
+  const context = useContext(CreateModelContext)
   if (!context) {
-    throw new Error("useUserContext must be used within a UserContextProvider");
+    throw new Error('useUserContext must be used within a UserContextProvider')
   }
-  return context;
+  return context
 }

@@ -1,18 +1,18 @@
 // ForwardButton.tsx
-import React from "react";
-import { ActionIcon, rem } from "@mantine/core";
+import React from 'react'
+import { ActionIcon, rem } from '@mantine/core'
 
 type ReturnButtonProps = {
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-};
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+}
 const IconButton = ({ onClick }: ReturnButtonProps) => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: rem(12),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: rem(12)
       }}
     >
       {/* Button */}
@@ -22,11 +22,11 @@ const IconButton = ({ onClick }: ReturnButtonProps) => {
         h={40}
         variant="gradient"
         aria-label="Gradient action icon"
-        gradient={{ from: "#414344", to: "#2B2D2E", deg: 145 }}
+        gradient={{ from: '#414344', to: '#2B2D2E', deg: 145 }}
         style={{
-          boxShadow: "3px 6px 10px #1212128e, -3px -6px 10px #2a2a2a",
-          border: "1px solid #2f2f2f",
-          transition: "all 0.2s ease",
+          boxShadow: '3px 6px 10px #1212128e, -3px -6px 10px #2a2a2a',
+          border: '1px solid #2f2f2f',
+          transition: 'all 0.2s ease'
         }}
         className="return-action-icon"
         onClick={onClick}
@@ -36,7 +36,7 @@ const IconButton = ({ onClick }: ReturnButtonProps) => {
         </svg>
       </ActionIcon>
     </div>
-  );
-};
+  )
+}
 
-export default IconButton;
+export default IconButton

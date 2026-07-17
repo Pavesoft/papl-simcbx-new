@@ -41,5 +41,5 @@ export enum RoundingModes {
   /**
    * Rounding mode to round away from zero.
    */
-  UP,
+  UP
 }

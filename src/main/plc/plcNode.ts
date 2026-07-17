@@ -158,7 +158,11 @@ export class PLCNode {
   }
 
   /** Chunked read honoring the Modbus per-request limits. */
-  private async readBlock(parsed: ParsedAddress, length: number, label: string): Promise<(boolean | number)[]> {
+  private async readBlock(
+    parsed: ParsedAddress,
+    length: number,
+    label: string
+  ): Promise<(boolean | number)[]> {
     const { entry } = parsed
     const isBit = entry.table !== 'holding'
     const maxPerRead = isBit ? MAX_BITS_PER_READ : MAX_REGISTERS_PER_READ
@@ -169,19 +173,16 @@ export class PLCNode {
       const chunkStart = start + done
       const chunkLength = Math.min(maxPerRead, length - done)
 
-      const response = await this.execLocked<{ data: (boolean | number)[] }>(
-        async (client) => {
-          switch (entry.table) {
-            case 'coil':
-              return client.readCoils(chunkStart, chunkLength)
-            case 'discrete':
-              return client.readDiscreteInputs(chunkStart, chunkLength)
-            case 'holding':
-              return client.readHoldingRegisters(chunkStart, chunkLength)
-          }
-        },
-        label
-      )
+      const response = await this.execLocked<{ data: (boolean | number)[] }>(async (client) => {
+        switch (entry.table) {
+          case 'coil':
+            return client.readCoils(chunkStart, chunkLength)
+          case 'discrete':
+            return client.readDiscreteInputs(chunkStart, chunkLength)
+          case 'holding':
+            return client.readHoldingRegisters(chunkStart, chunkLength)
+        }
+      }, label)
 
       // modbus-serial pads bit reads up to the next byte; trim to the requested length.
       values.push(...response.data.slice(0, chunkLength))
@@ -268,7 +269,10 @@ export class PLCNode {
           `write ${address}`
         )
       } else {
-        await this.execLocked((client) => client.writeRegister(target, Number(value)), `write ${address}`)
+        await this.execLocked(
+          (client) => client.writeRegister(target, Number(value)),
+          `write ${address}`
+        )
       }
 
       return true

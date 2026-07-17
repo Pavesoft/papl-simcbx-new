@@ -30,7 +30,9 @@ export async function createUser(input: Prisma.PortalUserCreateInput & { passwor
   return serialize(user)
 }
 
-export async function updateUser(input: Prisma.PortalUserUpdateInput & { id: string; password?: string }) {
+export async function updateUser(
+  input: Prisma.PortalUserUpdateInput & { id: string; password?: string }
+) {
   const { id, operatorId, userName, password } = input
 
   if (password?.length) {

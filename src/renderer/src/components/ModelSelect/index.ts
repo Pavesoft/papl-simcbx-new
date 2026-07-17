@@ -1,1 +1,1 @@
-export * from "./ModelSelect";
+export * from './ModelSelect'

@@ -1,6 +1,7 @@
 import { console } from './plcLogger'
 
-export const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+export const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms))
 
 export function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   let timeout: NodeJS.Timeout | undefined
