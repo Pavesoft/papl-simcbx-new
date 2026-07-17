@@ -34,7 +34,7 @@ const renderOutputBlock = (
         </HeadingMediumSemiBold>
       </Flex>
       <Flex
-        style={{ borderRadius: '0px 0px 8px 8px ' }}
+        style={{ borderRadius: '0px 0px 8px 8px' }}
         bg="#171717"
         w={'100%'}
         direction="column"

@@ -200,7 +200,7 @@ const AutoMode = () => {
           </AutoContextProvider>
         </Flex>
         <Divider c={'#404040'} />
-        <Flex h="100">
+        <Flex h="88">
           <Flex w={798}>
             <BottomStatus />
             <Divider c={'#404040'} orientation="vertical" ml={17} mr={17} />

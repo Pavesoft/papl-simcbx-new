@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Select, type SelectProps } from '@mantine/core'
+import { Button, Checkbox, Flex, Select, Title, type SelectProps } from '@mantine/core'
 import { TitleBold } from '../../components/AllText/Text'
 import { useEffect, useMemo, useState, type FC } from 'react'
 import { DatePickerInput } from '@mantine/dates'
@@ -233,8 +233,8 @@ const Reports = () => {
   }, [monthWiseReport, startDate])
 
   return (
-    <Flex direction="column" p={32} w={'100%'} bg={'#171717'} h={'96vh'}>
-      <TitleBold>Reports</TitleBold>
+    <Flex direction="column" p={24} w={'100%'} h={'96vh'}>
+      <Title order={2}>Reports</Title>
       <Flex w={'100%'} align={'flex-end'} justify={'space-between'}>
         <Flex columnGap={8} align={'flex-end'}>
           <DatePickerInput

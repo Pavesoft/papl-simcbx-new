@@ -30,13 +30,13 @@ const Manual = () => {
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              style={{ borderRadius: '0px 0px 8px 8px' }}
               bg="#171717"
               w={'100%'}
               direction="column"
-              rowGap={16}
-              pt={16}
-              pb={16}
+              rowGap={12}
+              pt={12}
+              pb={12}
             >
               {/* Done */}
 
@@ -75,13 +75,13 @@ const Manual = () => {
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              style={{ borderRadius: '0px 0px 8px 8px' }}
               bg="#171717"
               w={'100%'}
               direction="column"
-              rowGap={16}
-              pt={16}
-              pb={16}
+              rowGap={12}
+              pt={12}
+              pb={12}
             >
               {/* Done */}
               <CylinderTest
@@ -139,7 +139,7 @@ const Manual = () => {
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              style={{ borderRadius: '0px 0px 8px 8px' }}
               bg="#171717"
               w={'100%'}
               direction="column"
@@ -182,7 +182,7 @@ const Manual = () => {
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              style={{ borderRadius: '0px 0px 8px 8px' }}
               bg="#171717"
               w={'100%'}
               direction="column"
@@ -215,7 +215,7 @@ const Manual = () => {
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              style={{ borderRadius: '0px 0px 8px 8px' }}
               bg="#171717"
               w={'100%'}
               direction="column"
@@ -269,7 +269,7 @@ const Manual = () => {
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              style={{ borderRadius: '0px 0px 8px 8px' }}
               bg="#171717"
               w={'100%'}
               direction="column"
@@ -365,13 +365,13 @@ const Manual = () => {
               </HeadingMediumSemiBold>
             </Flex>
             <Flex
-              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              style={{ borderRadius: '0px 0px 8px 8px' }}
               bg="#171717"
               w={'100%'}
               direction="column"
               rowGap={8}
-              pt={16}
-              pb={16}
+              pt={12}
+              pb={12}
             >
               {/* Done */}
               <CylinderTest
