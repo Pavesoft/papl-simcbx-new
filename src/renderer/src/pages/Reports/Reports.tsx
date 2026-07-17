@@ -1,5 +1,4 @@
 import { Button, Checkbox, Flex, Select, Title, type SelectProps } from '@mantine/core'
-import { TitleBold } from '../../components/AllText/Text'
 import { useEffect, useMemo, useState, type FC } from 'react'
 import { DatePickerInput } from '@mantine/dates'
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table'
