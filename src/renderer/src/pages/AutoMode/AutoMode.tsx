@@ -97,13 +97,14 @@ const AutoMode = () => {
       } else {
         laserInProgress.current = true
         ;(async () => {
+          let marked = false
           try {
             const markContent = await generatePartSerialNumber({
               modelId: selectedModelDetails!.id,
               modelPartNo: selectedModelDetails!.partNo,
               revNo: selectedModelDetails!.revNo
             })
-            const marked = await triggerLaserMarker(
+            marked = await triggerLaserMarker(
               writeMultipleValuesToPlc,
               selectedModelDetails!.fileName ?? '',
               'Barcode',
@@ -127,6 +128,14 @@ const AutoMode = () => {
             // Make sure this flag is reset
             // It makes sure the same logic doesn't end up running redundantly
             laserInProgress.current = false
+            // If the part was NOT actually marked (laser reported not-ready,
+            // the mark failed, or something threw) the trigger bit is still
+            // high on the PLC. Release the edge latch so the next poll sees a
+            // fresh rising edge and retries this part, instead of consuming the
+            // trigger and skipping it - the cause of rare (~1-in-100) misses.
+            if (!marked) {
+              plcTriggerBitsPrevValue.current.laserMarkingTriggerBit = false
+            }
           }
         })()
       }
