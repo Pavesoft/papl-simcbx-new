@@ -134,6 +134,9 @@ const AutoMode = () => {
             // fresh rising edge and retries this part, instead of consuming the
             // trigger and skipping it - the cause of rare (~1-in-100) misses.
             if (!marked) {
+              console.log(
+                '⚠️ Laser marking did NOT happen for this part - releasing the trigger edge to retry on the next poll'
+              )
               plcTriggerBitsPrevValue.current.laserMarkingTriggerBit = false
             }
           }
