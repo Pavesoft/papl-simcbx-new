@@ -59,108 +59,143 @@ const AutoMode = () => {
     /**
      * in a cycle two or more operations ( i.e., laser marking, scanning, data logging, etc ) can be performed simutaneously on separate parts
      */
-    const shouldTriggerLaser =
-      readValueFromPlc(TRIGGER_LASER_MARKER_BIT) &&
-      !plcTriggerBitsPrevValue.current.laserMarkingTriggerBit
+    const laserBit = readValueFromPlc(TRIGGER_LASER_MARKER_BIT)
+    const barcodeBit = readValueFromPlc(TRIGGER_BARCODE_SCANNER_BIT)
+    const dumpBit = readValueFromPlc(TRIGGER_DUMP_PART_DATA_BIT)
+
+    const shouldTriggerLaser = laserBit && !plcTriggerBitsPrevValue.current.laserMarkingTriggerBit
     const shouldTriggerBarcode =
-      readValueFromPlc(TRIGGER_BARCODE_SCANNER_BIT) &&
-      !plcTriggerBitsPrevValue.current.barcodeScanningTriggerBit
-    const shouldDumpPartData =
-      readValueFromPlc(TRIGGER_DUMP_PART_DATA_BIT) &&
-      !plcTriggerBitsPrevValue.current.dumpPartDataTriggerBit
+      barcodeBit && !plcTriggerBitsPrevValue.current.barcodeScanningTriggerBit
+    const shouldDumpPartData = dumpBit && !plcTriggerBitsPrevValue.current.dumpPartDataTriggerBit
 
-    //update previous values for all trigger bits
-    plcTriggerBitsPrevValue.current.laserMarkingTriggerBit =
-      readValueFromPlc(TRIGGER_LASER_MARKER_BIT)
-    plcTriggerBitsPrevValue.current.barcodeScanningTriggerBit = readValueFromPlc(
-      TRIGGER_BARCODE_SCANNER_BIT
-    )
-    plcTriggerBitsPrevValue.current.dumpPartDataTriggerBit = readValueFromPlc(
-      TRIGGER_DUMP_PART_DATA_BIT
+    const isModelReady = !!(
+      selectedModel &&
+      selectedModelDetails &&
+      selectedModelDetails.id &&
+      selectedModelDetails.partNo
     )
 
-    if (
-      (shouldDumpPartData || shouldTriggerBarcode || shouldTriggerLaser) &&
-      (!selectedModel ||
-        !selectedModelDetails ||
-        !selectedModelDetails?.id ||
-        !selectedModelDetails.partNo)
-    ) {
-      console.warn(
-        "model or model details missing therefore can't process with laser, barcode or dump part data operation"
-      )
-      return
-    }
+    /**
+     * Track whether each rising edge was actually serviced this cycle.
+     * If a trigger fires but we can't service it yet - the model details are
+     * still loading, or a previous run of the same operation is still in
+     * progress - we must NOT advance the previous-value latch below. Otherwise
+     * the low->high edge gets consumed and, since the PLC holds the bit high,
+     * no new rising edge is ever seen and the operation never runs for that part.
+     */
+    let laserServiced = true
+    let barcodeServiced = true
+    let dumpServiced = true
 
-    if (shouldTriggerLaser && !laserInProgress.current && selectedModelDetails) {
-      laserInProgress.current = true
-      ;(async () => {
-        try {
-          const markContent = await generatePartSerialNumber({
-            modelId: selectedModelDetails.id,
-            modelPartNo: selectedModelDetails.partNo,
-            revNo: selectedModelDetails.revNo
-          })
-          await triggerLaserMarker(
-            writeMultipleValuesToPlc,
-            selectedModelDetails.fileName ?? '',
-            'Barcode',
-            markContent
-          )
-          if (selectedModel) {
-            await unwrap(
-              api.modelSerialNumber.update({
-                modelId: selectedModel,
-                serialNumber: markContent,
-                date: new Date()
-              })
+    if (shouldTriggerLaser) {
+      if (!isModelReady) {
+        laserServiced = false
+        console.warn("model or model details missing therefore can't trigger laser marker")
+      } else if (laserInProgress.current) {
+        // previous marking still running - leave the edge pending so it retries
+        laserServiced = false
+      } else {
+        laserInProgress.current = true
+        ;(async () => {
+          try {
+            const markContent = await generatePartSerialNumber({
+              modelId: selectedModelDetails!.id,
+              modelPartNo: selectedModelDetails!.partNo,
+              revNo: selectedModelDetails!.revNo
+            })
+            const marked = await triggerLaserMarker(
+              writeMultipleValuesToPlc,
+              selectedModelDetails!.fileName ?? '',
+              'Barcode',
+              markContent
             )
+            // Only persist/advance the serial number when the laser actually
+            // marked the part. Otherwise a not-ready or failed mark would burn
+            // a serial number that never got printed.
+            if (marked && selectedModel) {
+              await unwrap(
+                api.modelSerialNumber.update({
+                  modelId: selectedModel,
+                  serialNumber: markContent,
+                  date: new Date()
+                })
+              )
+            }
+          } catch (error) {
+            console.error('Failed to trigger laser marker', error)
+          } finally {
+            // Make sure this flag is reset
+            // It makes sure the same logic doesn't end up running redundantly
+            laserInProgress.current = false
           }
-        } catch (error) {
-          console.error('Failed to trigger laser marker', error)
-        } finally {
-          // Make sure this flag is reset
-          // It makes sure the same logic doesn't end up running redundantly
-          laserInProgress.current = false
-        }
-      })()
+        })()
+      }
     }
-    if (shouldTriggerBarcode && !scannerInProgress.current) {
-      scannerInProgress.current = true
-      ;(async () => {
-        try {
-          const scannerResponse = await triggerScanner(readValueFromPlc, writeMultipleValuesToPlc)
-          if (scannerResponse?.barcode) {
-            setBarcodeScanResult(scannerResponse.barcode)
-          } else {
-            setBarcodeScanResult(null)
+
+    if (shouldTriggerBarcode) {
+      if (!isModelReady) {
+        barcodeServiced = false
+        console.warn("model or model details missing therefore can't trigger barcode scanner")
+      } else if (scannerInProgress.current) {
+        barcodeServiced = false
+      } else {
+        scannerInProgress.current = true
+        ;(async () => {
+          try {
+            const scannerResponse = await triggerScanner(readValueFromPlc, writeMultipleValuesToPlc)
+            if (scannerResponse?.barcode) {
+              setBarcodeScanResult(scannerResponse.barcode)
+            } else {
+              setBarcodeScanResult(null)
+            }
+          } catch (e) {
+            console.error('Failed to trigger barcode scanner', e)
+          } finally {
+            scannerInProgress.current = false
           }
-        } catch (e) {
-          console.error('Failed to trigger barcode scanner', e)
-        } finally {
-          scannerInProgress.current = false
-        }
-      })()
+        })()
+      }
     }
-    if (shouldDumpPartData && !dumpPartDataInProgress.current) {
-      ;(async () => {
-        try {
-          const laserMarkContent = readLaserMarkContent(readValueFromPlc)
-          if (!selectedModel) {
-            throw new Error('model is missing')
+
+    if (shouldDumpPartData) {
+      if (!isModelReady) {
+        dumpServiced = false
+        console.warn("model or model details missing therefore can't dump part data")
+      } else if (dumpPartDataInProgress.current) {
+        dumpServiced = false
+      } else {
+        dumpPartDataInProgress.current = true
+        ;(async () => {
+          try {
+            const laserMarkContent = readLaserMarkContent(readValueFromPlc)
+            await dumpPartData(
+              readValueFromPlc,
+              writeMultipleValuesToPlc,
+              laserMarkContent,
+              selectedModelDetails as ModelSetting
+            )
+          } catch (e) {
+            console.error('Failed to dump part data', e)
+          } finally {
+            dumpPartDataInProgress.current = false
           }
-          await dumpPartData(
-            readValueFromPlc,
-            writeMultipleValuesToPlc,
-            laserMarkContent,
-            selectedModelDetails as ModelSetting
-          )
-        } catch (e) {
-          console.error('Failed to dump part data', e)
-        } finally {
-          dumpPartDataInProgress.current = false
-        }
-      })()
+        })()
+      }
+    }
+
+    /**
+     * Advance the previous-value latch. For a rising edge we could not service,
+     * keep the previous value untouched (it stays low) so the edge is detected
+     * again on the next cycle once the operation is free / the model is ready.
+     */
+    if (!(shouldTriggerLaser && !laserServiced)) {
+      plcTriggerBitsPrevValue.current.laserMarkingTriggerBit = laserBit
+    }
+    if (!(shouldTriggerBarcode && !barcodeServiced)) {
+      plcTriggerBitsPrevValue.current.barcodeScanningTriggerBit = barcodeBit
+    }
+    if (!(shouldDumpPartData && !dumpServiced)) {
+      plcTriggerBitsPrevValue.current.dumpPartDataTriggerBit = dumpBit
     }
   }, [allItemsPlc])
 

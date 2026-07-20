@@ -1,19 +1,25 @@
 import { convertAsciiStringToWords } from '../../shared/util/general.util'
 import { api } from '../../api'
 
+/**
+ * Returns true only when the laser actually completed a mark. Callers must
+ * check this before recording the serial number - otherwise a not-ready laser
+ * or a failed/exception mark would still advance the stored serial as if the
+ * part had been marked.
+ */
 export const triggerLaserMarker = async (
   plcWriter: (writes: { address: string; value: number | boolean }[]) => void,
   templateName: string,
   markName: string,
   content: string
-) => {
+): Promise<boolean> => {
   try {
     // 1. Check laser READY status (not just connected)
     const { ready } = await api.laser.ready()
     if (!ready) {
       plcWriter([{ address: 'M1920', value: true }]) // Laser not ready bit
       console.warn('Laser not ready')
-      return
+      return false
     }
     plcWriter([{ address: 'M1926', value: true }]) // Laser ready bit
 
@@ -35,12 +41,15 @@ export const triggerLaserMarker = async (
       plcWriter([{ address: 'M1921', value: true }])
       plcWriter([{ address: 'D669', value: 0 }, ...markContentWrites]) // Laser print OK bit
       console.log('✅ Laser marking completed', markContentWrites)
+      return true
     } else {
       plcWriter([{ address: 'M1922', value: true }]) // Laser print error bit
       console.error('❌ Laser mark failed:', result.error)
+      return false
     }
   } catch (err) {
     plcWriter([{ address: 'M1922', value: true }])
     console.error('❌ Laser error:', err)
+    return false
   }
 }

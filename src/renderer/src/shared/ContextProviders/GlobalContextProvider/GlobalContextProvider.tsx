@@ -29,6 +29,14 @@ type GlobalContextType = {
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined)
 
+/**
+ * A single Modbus timeout tears down the socket, so `connected` briefly flips
+ * to false and the reconnect loop restores it within a few seconds. Only show
+ * the disconnect modal if the PLC stays down past this grace window, otherwise
+ * transient blips make the modal flicker/appear continuously.
+ */
+const DISCONNECT_MODAL_GRACE_MS = 6000
+
 export function GlobalContextProvider({ children }: { children: ReactNode }) {
   const [heartBeatStatus, setHeartBeatStatus] = useState<boolean>(false)
   const [allItemsPlc, setAllItemsPlc] = useState<PLCData | object>({})
@@ -41,6 +49,7 @@ export function GlobalContextProvider({ children }: { children: ReactNode }) {
   const [opened, { open, close }] = useDisclosure(false)
   const allItemsPlcRef = useRef({})
   const hasModeBeenSentRef = useRef(false)
+  const disconnectModalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const plcManager = new PLCAddressManager(PLC_MAPPINGS)
   const location = useLocation()
@@ -131,10 +140,24 @@ export function GlobalContextProvider({ children }: { children: ReactNode }) {
   }, [location.pathname])
 
   useEffect(() => {
-    // Disconnect warning modal: only while logged in and PLC is down.
+    /**
+     * Disconnect warning modal (debounced): only while logged in and PLC is
+     * down, and only once the outage outlasts the grace window. A transient
+     * blip (single Modbus timeout) reconnects before the timer fires, so the
+     * modal never flashes. Reconnect / logout hides it immediately.
+     */
     if (userDetails && !heartBeatStatus) {
-      open()
+      if (!disconnectModalTimerRef.current) {
+        disconnectModalTimerRef.current = setTimeout(() => {
+          disconnectModalTimerRef.current = null
+          open()
+        }, DISCONNECT_MODAL_GRACE_MS)
+      }
     } else {
+      if (disconnectModalTimerRef.current) {
+        clearTimeout(disconnectModalTimerRef.current)
+        disconnectModalTimerRef.current = null
+      }
       close()
     }
 
@@ -149,6 +172,16 @@ export function GlobalContextProvider({ children }: { children: ReactNode }) {
       hasModeBeenSentRef.current = true
     }
   }, [heartBeatStatus, userDetails])
+
+  // Clear the pending disconnect-modal timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (disconnectModalTimerRef.current) {
+        clearTimeout(disconnectModalTimerRef.current)
+        disconnectModalTimerRef.current = null
+      }
+    }
+  }, [])
 
   useEffect(() => {
     allItemsPlcRef.current = allItemsPlc
