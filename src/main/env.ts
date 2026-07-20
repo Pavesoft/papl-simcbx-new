@@ -9,4 +9,4 @@ if (app.isPackaged) {
   dotenv.config()
 }
 
-process.env.DATABASE_URL ??= 'postgresql://postgres:postgres@localhost:5435/mydb?schema=public'
+process.env.DATABASE_URL ??= 'postgresql://postgres:postgres@localhost:5432/mydb?schema=public'

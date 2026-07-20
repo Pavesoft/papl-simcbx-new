@@ -1648,20 +1648,20 @@ __metadata:
   linkType: hard
 
 "@tabler/icons-react@npm:^3.44.0":
-  version: 3.44.0
-  resolution: "@tabler/icons-react@npm:3.44.0"
+  version: 3.45.0
+  resolution: "@tabler/icons-react@npm:3.45.0"
   dependencies:
-    "@tabler/icons": 3.44.0
+    "@tabler/icons": 3.45.0
   peerDependencies:
     react: ">= 16"
-  checksum: c5be47a21134b6513f714d3ec42d123e71b3110d16bf530dd45518db9fc5d152debcfe257201da89d94c875c60a9333f927ca79f0692d2074202f333531c324f
+  checksum: c261af93c7e3a5fe8722bdbd8b9a1df7966d985b08031ec728c4274e0505a2a450c30fe462ae39c61f6c0e2132800b1e6ee2bf610c8541fb081ffc2e8598d5cb
   languageName: node
   linkType: hard
 
-"@tabler/icons@npm:3.44.0":
-  version: 3.44.0
-  resolution: "@tabler/icons@npm:3.44.0"
-  checksum: b97800924754a0d80b880fb886115aa1249b73c87d21395f48f5728b0ab5d70723492cf32e5e2dbd968cd15eb994e122941367496d803886433b094cf0edbbc5
+"@tabler/icons@npm:3.45.0":
+  version: 3.45.0
+  resolution: "@tabler/icons@npm:3.45.0"
+  checksum: 1a60f96c2d7af2f4e0681ffa77ee5103af43bc7f3566e06bf44881baffeabdff4fefa1a31ca482bb5a449017f9ca28acb42c1b591dd20570d6bd746fdf4ba80e
   languageName: node
   linkType: hard
 
@@ -2208,9 +2208,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-builder-lib@npm:26.15.6":
-  version: 26.15.6
-  resolution: "app-builder-lib@npm:26.15.6"
+"app-builder-lib@npm:26.15.7":
+  version: 26.15.7
+  resolution: "app-builder-lib@npm:26.15.7"
   dependencies:
     "@electron/asar": 3.4.1
     "@electron/fuses": ^1.8.0
@@ -2254,9 +2254,9 @@ __metadata:
     unzipper: ^0.12.3
     which: ^5.0.0
   peerDependencies:
-    dmg-builder: 26.15.6
-    electron-builder-squirrel-windows: 26.15.6
-  checksum: ea344f3cc56d9721abff23ea784a82d7e5123cab14d68a2e2b93f2c4f9111ffbaeeff17d57674da53649b4eb351f4454634532474b707b6f2e65e482bd32e1c2
+    dmg-builder: 26.15.7
+    electron-builder-squirrel-windows: 26.15.7
+  checksum: 6085a022f11df12f8ccbdb2be0800ad278e6885fba1a023c191255d1c799a70f175ff407ddf514c92d652579472cf1a1cf6042ba6dc6279849471a2ec37fc4a6
   languageName: node
   linkType: hard
 
@@ -3293,15 +3293,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dmg-builder@npm:26.15.6":
-  version: 26.15.6
-  resolution: "dmg-builder@npm:26.15.6"
+"dmg-builder@npm:26.15.7":
+  version: 26.15.7
+  resolution: "dmg-builder@npm:26.15.7"
   dependencies:
-    app-builder-lib: 26.15.6
+    app-builder-lib: 26.15.7
     builder-util: 26.15.3
     fs-extra: ^10.1.0
     js-yaml: ^4.1.0
-  checksum: 3f8cadfd76c805b8d33475258e7b065e37f6fcbd120a49772847afc53b0041e459c0615c43de943cf1fecf260fc03fd27e20514b4a0ac13fbe50ec7ee410d465
+  checksum: 14b9d0f189dbb167a76ac021c4f326222b4a10cbbf2999e6a4d21450556088bb5fb9a7f1a0c5067874c354b22621b4b5829ddd87bb48fba5cfe068d356a571dc
   languageName: node
   linkType: hard
 
@@ -3389,15 +3389,15 @@ __metadata:
   linkType: hard
 
 "electron-builder@npm:^26.0.12":
-  version: 26.15.6
-  resolution: "electron-builder@npm:26.15.6"
+  version: 26.15.7
+  resolution: "electron-builder@npm:26.15.7"
   dependencies:
-    app-builder-lib: 26.15.6
+    app-builder-lib: 26.15.7
     builder-util: 26.15.3
     builder-util-runtime: 9.7.0
     chalk: ^4.1.2
     ci-info: ^4.2.0
-    dmg-builder: 26.15.6
+    dmg-builder: 26.15.7
     fs-extra: ^10.1.0
     lazy-val: ^1.0.5
     simple-update-notifier: 2.0.0
@@ -3405,7 +3405,7 @@ __metadata:
   bin:
     electron-builder: ./cli.js
     install-app-deps: ./install-app-deps.js
-  checksum: 9fb1f1699da4e0ff23e727b97936041255b63c9500d59a046f97977b2b6d378176b462a790e13a66f53a372be83bffea18d4ac99e2a9045f95f8bcbe0d958b49
+  checksum: f22b514c7d6af909b57f5e34b2ebf0ab58017f1f18e66c4f44731ef08aa68e5af22307e971f7d0118599a5538d8f4282641b59f3c82e0652b2fabcd59f6c2a22
   languageName: node
   linkType: hard
 
@@ -3427,9 +3427,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.389":
-  version: 1.5.392
-  resolution: "electron-to-chromium@npm:1.5.392"
-  checksum: 5630effd2fdc7464f3082ad3f43da9316a2f74e68a5fc91b5532a36192b189277335e2a3f6212db35eec4a862c5f47edec3a4ae87d9add7c919ccbf0d8682a05
+  version: 1.5.393
+  resolution: "electron-to-chromium@npm:1.5.393"
+  checksum: a8a72286c5a575911dbb49f7ecaab176fffd1346a6bf0b60ce7cfd931fcad546a2b3c1db7aae24f8485f86761c6a09f0a2d34ea06dde2bc5bead1719363be281
   languageName: node
   linkType: hard
 
@@ -4199,9 +4199,9 @@ __metadata:
   linkType: hard
 
 "fast-uri@npm:^3.0.1":
-  version: 3.1.3
-  resolution: "fast-uri@npm:3.1.3"
-  checksum: 288724ec7170d190c6456824fc50eff8ea5b9636d3ac8183cfa039653babf015a67dcb930c632ca5997a6613ebcc8b8e41283e6fab235d7dcfa909b196594e29
+  version: 3.1.4
+  resolution: "fast-uri@npm:3.1.4"
+  checksum: 6e1262dd5901f4f095eeb4c446111f5818320f05a8f11eaa46d9117eec3b5fd6114507a66338c564004eaa002b0eb865ca998b34780373fd205d53b5182c3bd2
   languageName: node
   linkType: hard
 
@@ -4762,9 +4762,9 @@ __metadata:
   linkType: hard
 
 "immer@npm:^11.0.0, immer@npm:^11.1.8":
-  version: 11.1.11
-  resolution: "immer@npm:11.1.11"
-  checksum: f3701f823dfba4e54ab0270e9e748ffef36b2c15645e4c46da0492dfeccc51a4427eff8a02f42cfe5c208ceeeee72973f3a54e3c84ec11a87a7c69d8df50df49
+  version: 11.1.15
+  resolution: "immer@npm:11.1.15"
+  checksum: 5f99854dced7d1fa6391a476da30a3a44669a026233d9e20aaf47f95a01c088436fb9ac82f9d0cbbe3da3e708b5bedf9e4a5cfc9932a2821668da67e9c7b3b9a
   languageName: node
   linkType: hard
 
@@ -5656,7 +5656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.12":
+"nanoid@npm:^3.3.16":
   version: 3.3.16
   resolution: "nanoid@npm:3.3.16"
   bin:
@@ -6177,13 +6177,13 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.5.6":
-  version: 8.5.19
-  resolution: "postcss@npm:8.5.19"
+  version: 8.5.20
+  resolution: "postcss@npm:8.5.20"
   dependencies:
-    nanoid: ^3.3.12
+    nanoid: ^3.3.16
     picocolors: ^1.1.1
     source-map-js: ^1.2.1
-  checksum: c977ac0c159f7833ceb212c9cb2c1b75845703a2e620f2eb1cd719ee91290a830acf0385f8695f56470560e501e619ef1518a9e7ee2f54bde935484cc73b624c
+  checksum: 0dd2c0eb3ab98237ef6b9e016d36f02c416b6ce7794b07a62625c89d0b1ff07e0301ecc32f3292ac843bd2b588a05536a7682f3e592027e503cf596723ccaca0
   languageName: node
   linkType: hard
 
