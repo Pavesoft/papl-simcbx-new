@@ -25,7 +25,7 @@ export const generatePartSerialNumber = async ({
   let serial = '0000'
 
   if (lastEntry) {
-    const isSameDay = lastEntry.date.getTime() >= today.getTime()
+    const isSameDay = new Date(lastEntry.date).getTime() >= today.getTime()
     if (isSameDay) {
       const partNo = lastEntry.serialNumber.match(/^([A-Za-z0-9-]+)(\d{10})(\d{2}:\d{2}:\d{2})$/)
 
