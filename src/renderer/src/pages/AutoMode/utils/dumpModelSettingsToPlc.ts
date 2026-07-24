@@ -10,7 +10,12 @@ export const dumpModelSettingsToPlc = ({
   plcWriter,
   selectedModelDetails
 }: DumpModelSettingsToPlc) => {
-  const words = dumpModelSettingToPlcWords(selectedModelDetails as ModelSetting)
+  if (!selectedModelDetails) {
+    console.warn('dumpModelSettingsToPlc: no model selected, skipping PLC dump')
+    return
+  }
+
+  const words = dumpModelSettingToPlcWords(selectedModelDetails)
   plcWriter([
     { address: 'D700', value: words.D700 },
     { address: 'D701', value: words.D701 },
