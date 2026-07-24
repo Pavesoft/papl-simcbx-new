@@ -87,6 +87,14 @@ export class ModbusClient {
         throw error
       }
 
+      // A client-side argument error (e.g. writeRegister given an out-of-range or
+      // NaN value) is thrown synchronously before any bytes reach the wire, so the
+      // TCP link is still healthy. Tearing the socket down here would disconnect the
+      // PLC over a caller bug; surface the error without closing the connection.
+      if (error instanceof RangeError || error instanceof TypeError) {
+        throw error
+      }
+
       console.error(`[${this.tag}] exec() failed; closing client:`, toErrorMessage(error))
       this.connectedState = false
       await this.close()

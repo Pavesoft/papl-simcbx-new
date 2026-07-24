@@ -23,7 +23,6 @@ const ErrorLogs = () => {
         bits.forEach((bitVal, index) => {
           if (bitVal === 1) {
             const bitId = `D${d}.${index}`
-            // console.log("bitId", bitId);
 
             const error = ERROR_CODES.find((e) => e.bit === bitId)
             if (error) active.push(error)

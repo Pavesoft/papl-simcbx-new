@@ -252,6 +252,22 @@ export class PLCNode {
     return value === true || value === 1 || value === '1' || value === 'true'
   }
 
+  /**
+   * Modbus holding registers are unsigned 16-bit (0..65535). The renderer produces
+   * SIGNED 16-bit words (convertIntToWord/convertFloatToWord return getInt16 values,
+   * which can be negative) and occasionally NaN from bad parseInt/parseFloat. Passing
+   * a negative number or NaN to writeRegister makes modbus-serial call
+   * buffer.writeUInt16BE() with an out-of-range value, which throws a RangeError.
+   * exec() then misreads that client-side RangeError as a transport failure and tears
+   * down the socket — silently dropping the write AND disconnecting the PLC on every
+   * model dump. Masking to a 16-bit register preserves the exact bit pattern the PLC
+   * expects (reads mask with & 0xffff too, so values round-trip correctly).
+   */
+  private static toRegisterValue(value: unknown): number {
+    const n = Number(value)
+    return Number.isFinite(n) ? Math.trunc(n) & 0xffff : 0
+  }
+
   async write(address: string, value: unknown): Promise<boolean> {
     try {
       // Block-form address with an array value -> bulk write.
@@ -270,7 +286,7 @@ export class PLCNode {
         )
       } else {
         await this.execLocked(
-          (client) => client.writeRegister(target, Number(value)),
+          (client) => client.writeRegister(target, PLCNode.toRegisterValue(value)),
           `write ${address}`
         )
       }
@@ -296,7 +312,7 @@ export class PLCNode {
           `write multiple ${address}`
         )
       } else {
-        const numbers = values.map(Number)
+        const numbers = values.map(PLCNode.toRegisterValue)
         for (let done = 0; done < numbers.length; done += MAX_REGISTERS_PER_WRITE) {
           const chunk = numbers.slice(done, done + MAX_REGISTERS_PER_WRITE)
           await this.execLocked(

@@ -33,7 +33,6 @@ const healthBackgroundColorMap: Record<number, string> = {
 const Auto = () => {
   const { readValueFromPlc, writeMultipleValuesToPlc } = useGlobalContext()
   const [opened, { open, close }] = useDisclosure(false)
-  // console.log("Auto Mode Rendered", readValueFromPlc("D200"));
   const fetchSensorCylinderHealth = (bit: string) => {
     const value = readValueFromPlc(bit)
     return Number(value)
@@ -48,8 +47,6 @@ const Auto = () => {
       typeof high === 'number' ? high : 0
     )
   }
-
-  // console.log("Auto Mode Rendered", readValueFromPlc("M1910"));
 
   return (
     <Flex w={1310} direction="column">

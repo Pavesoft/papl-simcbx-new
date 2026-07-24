@@ -84,7 +84,6 @@ export default function FooterBar() {
   const activeMenuItem = filteredMenuItems.find((item) => currentPath.startsWith(item.path)) || {
     label: 'MAIN MENU'
   }
-  console.log('user', userDetails)
 
   return (
     <Flex
