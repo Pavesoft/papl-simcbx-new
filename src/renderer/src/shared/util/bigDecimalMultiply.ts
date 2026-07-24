@@ -1,6 +1,11 @@
 import { stripTrailingZero } from './bigDecimalStripTrailingZero'
 
 export function bigDecimalMultiply(number1, number2) {
+  // Guard against null/undefined (e.g. unset nullable Decimal? model fields).
+  // Without this, a single null field throws and aborts the entire PLC dump.
+  if (number1 == null || number2 == null) {
+    return '0'
+  }
   number1 = number1.toString()
   number2 = number2.toString()
 

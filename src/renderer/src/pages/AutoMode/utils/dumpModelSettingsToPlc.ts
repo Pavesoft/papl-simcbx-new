@@ -44,7 +44,7 @@ export const dumpModelSettingsToPlc = ({
     { address: 'D778', value: words.D778 },
     { address: 'D779', value: words.D779 },
     { address: 'D780', value: words.D780 },
-    { address: 'D782', value: words.D782 },
+    { address: 'D781', value: words.D781 },
     { address: 'D782', value: words.D782 },
     { address: 'D783', value: words.D783 },
     { address: 'D790', value: words.D790 },
