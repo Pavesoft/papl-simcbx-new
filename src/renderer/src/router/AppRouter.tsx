@@ -9,7 +9,6 @@ import Login from '../pages/auth/Login'
 import NotFound from '../pages/NotFound'
 
 // Private Pages
-import PLCTest from '../pages/test/PLCTest'
 import CreateModel from '../pages/ModelConfig/Components/CreateModelsSettings/CreateModel'
 import ViewModelsSetting from '../pages/ModelConfig/Components/ViewModelsSetting/ViewModelsSetting'
 import ManualTest from '../pages/ManualTest/ManualTest'
@@ -66,7 +65,6 @@ export default function AppRouter() {
           path="/model-config/:key/:id"
           element={hasPermission('modelConfig') ? <ViewModelsSetting /> : <NotFound />}
         />
-        <Route path="/test" element={<PLCTest />} />
       </Route>
 
       {/* Catch-All */}
