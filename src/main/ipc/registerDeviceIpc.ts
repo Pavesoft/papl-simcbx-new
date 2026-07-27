@@ -3,6 +3,7 @@ import { IPC } from '@shared/ipc.types'
 import { handleWithEnvelope } from './envelope'
 import { getBarcodeScanner } from '../devices/barcodeScanner'
 import { getLaserClient, type ConnectionStatus } from '../devices/laserMarker'
+import { laserLog } from '../devices/laserLogger'
 import { exportPartDataToExcel } from '../services/report.service'
 
 function broadcast(channel: string, payload: unknown): void {
@@ -40,22 +41,35 @@ export function registerDeviceIpc(): void {
       const isReady = await getLaserClient().waitForReady()
       return { ready: isReady }
     } catch (err) {
-      return { ready: false, error: err instanceof Error ? err.message : String(err) }
+      const error = err instanceof Error ? err.message : String(err)
+      laserLog.error(`Ready check failed: ${error}`)
+      return { ready: false, error }
     }
   })
 
   ipcMain.handle(
     IPC.LASER_MARK,
     async (_e, input: { template: string; markName: string; content: string }) => {
+      const laser = getLaserClient()
       try {
-        const laser = getLaserClient()
+        if (laser.status !== 'connected') {
+          throw new Error('Laser not connected')
+        }
         const waitDone = laser.waitForMarkComplete(20000)
-        laser.startMarking(input.template, input.markName, input.content)
+        const sent = laser.startMarking(input.template, input.markName, input.content)
+        if (!sent) {
+          // Swallow the now-orphaned waiter's eventual timeout rejection, then
+          // fail fast instead of blocking the caller for the full 20s window.
+          waitDone.catch(() => {})
+          throw new Error('Failed to send mark command - laser not connected')
+        }
         await waitDone
 
         return { success: true, content: input.content }
       } catch (err) {
-        return { success: false, error: err instanceof Error ? err.message : String(err) }
+        const error = err instanceof Error ? err.message : String(err)
+        laserLog.error(`Mark failed for content="${input.content}": ${error}`)
+        return { success: false, error }
       }
     }
   )

@@ -1,12 +1,7 @@
 import net from 'net'
 import EventEmitter from 'events'
-import fs from 'fs'
-import path from 'path'
-import { app } from 'electron'
 import { LASER_MARKER_DEVICE_IP, LASER_MARKER_DEVICE_PORT } from '@shared/plc.const'
-
-const LOG_DIR = path.join(app.getPath('userData'), 'logs')
-const LOG_FILE = path.join(LOG_DIR, 'laser.log')
+import { laserLog } from './laserLogger'
 
 export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected'
 
@@ -16,19 +11,11 @@ interface LaserMarkerOptions {
 }
 
 type PendingResponse = {
+  label: string
   matcher: (msg: string) => boolean
   resolve: (value?: string) => void
   reject: (err?: Error) => void
   timeout: NodeJS.Timeout
-}
-
-function appendLaserLog(entry: string): void {
-  const logLine = `[${new Date().toISOString()}] ${entry}\n`
-  fs.mkdir(LOG_DIR, { recursive: true }, () => {
-    fs.appendFile(LOG_FILE, logLine, (err) => {
-      if (err) console.error('Failed to write laser log:', err)
-    })
-  })
 }
 
 export class LaserClient extends EventEmitter {
@@ -61,13 +48,14 @@ export class LaserClient extends EventEmitter {
 
     this.status = 'connecting'
     this.emit('status', this.status)
+    laserLog.info(`Connecting to laser device at ${this.host}:${this.port}`)
 
     this.client = new net.Socket()
 
     this.client.connect(this.port, this.host, () => {
       this.status = 'connected'
       this.emit('status', this.status)
-      console.log('✅ Connected to laser device')
+      laserLog.info(`Connected to laser device at ${this.host}:${this.port}`)
     })
 
     this.client.on('data', (data: Buffer) => {
@@ -79,17 +67,18 @@ export class LaserClient extends EventEmitter {
         if (start === -1 || end === -1) break
         const frame = this.rxBuffer.slice(start, end + 1).trim()
         this.rxBuffer = this.rxBuffer.slice(end + 1)
+        laserLog.rx(`Received frame ${frame}`)
         this.handleIncomingMessage(frame)
-        appendLaserLog(frame)
       }
     })
 
     this.client.on('error', (err: Error) => {
-      console.error('❌ Laser socket error:', err.message)
+      laserLog.error(`Socket error: ${err.message}`)
       this.handleDisconnect()
     })
 
     this.client.on('close', () => {
+      laserLog.warn('Laser socket closed')
       this.handleDisconnect()
     })
   }
@@ -105,15 +94,20 @@ export class LaserClient extends EventEmitter {
   }
 
   private handleDisconnect(): void {
+    const wasConnected = this.status === 'connected'
     this.status = 'disconnected'
     this.emit('status', this.status)
+    if (wasConnected) laserLog.warn('Laser disconnected')
 
-    // Reject any awaiting operations immediately
+    // Reject any awaiting operations immediately so callers fail fast and can
+    // retry, instead of hanging until their individual response timeouts.
     for (const p of this.pendingResponses) {
       clearTimeout(p.timeout)
-      p.reject(new Error('Disconnected'))
+      laserLog.error(`Aborting pending "${p.label}" - laser disconnected`)
+      p.reject(new Error('Laser disconnected'))
     }
     this.pendingResponses = []
+    this.rxBuffer = ''
 
     if (this.client) {
       this.client.destroy()
@@ -125,32 +119,43 @@ export class LaserClient extends EventEmitter {
     }
     if (this.destroyed) return
 
+    laserLog.info(`Reconnecting in ${this._RECONNECT_DELAY} ms`)
     this.reconnectTimeout = setTimeout(() => {
       this.connect()
     }, this._RECONNECT_DELAY)
   }
 
-  private sendRaw(command: string): void {
+  /**
+   * Returns true when the payload was actually handed to the socket. Callers
+   * MUST check this: a silent no-op here (laser not connected) used to leave an
+   * awaiting mark/ready hanging for the full response timeout before failing.
+   */
+  private sendRaw(command: string): boolean {
     if (this.status !== 'connected' || !this.client) {
-      console.warn('⚠️ Cannot send, laser not connected')
-      return
+      laserLog.error(`Cannot send "${command}" - laser not connected`)
+      return false
     }
 
     const payload = command.endsWith('\r\n') ? command : `${command}\r\n`
     this.client.write(payload)
+    laserLog.tx(`Sent ${command}`)
+    return true
   }
 
   private waitForResponse(
+    label: string,
     matcher: (msg: string) => boolean,
     timeoutMs: number = 20000
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         this.pendingResponses = this.pendingResponses.filter((p) => p.timeout !== timeout)
-        reject(new Error('Laser response timeout'))
+        laserLog.error(`Timed out after ${timeoutMs} ms waiting for "${label}"`)
+        reject(new Error(`Laser response timeout (${label})`))
       }, timeoutMs)
 
       this.pendingResponses.push({
+        label,
         matcher,
         resolve: resolve as (value?: string) => void,
         reject,
@@ -159,12 +164,13 @@ export class LaserClient extends EventEmitter {
     })
   }
 
-  public startMarking(templateName: string, markName: string, content: string): void {
-    this.sendRaw(`<L${templateName}><D${markName},${content}><X>`)
+  public startMarking(templateName: string, markName: string, content: string): boolean {
+    laserLog.info(`Start marking template="${templateName}" mark="${markName}" content="${content}"`)
+    return this.sendRaw(`<L${templateName}><D${markName},${content}><X>`)
   }
 
-  public stopMarking(): void {
-    this.sendRaw(`<P>`)
+  public stopMarking(): boolean {
+    return this.sendRaw(`<P>`)
   }
 
   public close(): void {
@@ -174,17 +180,31 @@ export class LaserClient extends EventEmitter {
     this.emit('status', this.status)
     this.client?.destroy()
     this.client = null
+    laserLog.info('Laser client closed')
   }
 
   // ✅ Awaitable helpers
   public async waitForReady(): Promise<boolean> {
+    // Fail fast if we are not connected - otherwise the waiter below would hang
+    // for the full response timeout before rejecting. The status check and the
+    // send happen synchronously (no await between them), so the connection
+    // cannot drop in the gap, and registering the waiter before sending means a
+    // fast reply can never arrive before we are listening for it.
+    if (this.status !== 'connected') {
+      laserLog.error('Ready check aborted - laser not connected')
+      throw new Error('Laser not connected')
+    }
+    const responsePromise = this.waitForResponse('READY', (msg) => msg.startsWith('<?XREADY'))
     this.sendRaw(`<?XREADY>`)
-    const response = await this.waitForResponse((msg) => msg.startsWith('<?XREADY'))
-    return response.includes('<?XREADY,0>')
+    const response = await responsePromise
+    const ready = response.includes('<?XREADY,0>')
+    laserLog.info(`Ready check -> ${ready ? 'READY' : `NOT READY (${response})`}`)
+    return ready
   }
 
   public async waitForMarkComplete(timeout = 5000): Promise<void> {
-    await this.waitForResponse((msg) => msg.includes('<XE>'), timeout)
+    await this.waitForResponse('MARK_COMPLETE', (msg) => msg.includes('<XE>'), timeout)
+    laserLog.info('Mark complete (<XE> received)')
   }
 }
 
