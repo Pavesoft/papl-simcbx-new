@@ -13,25 +13,39 @@ import type { LaserLogLevel } from '@shared/ipc.types'
  * flow) write here - renderer lines arrive over IPC and are tagged [RENDERER]
  * so a single file tells the whole story of a mark.
  *
- * The folder is created automatically on first write, and is resolved to a
- * writable location for BOTH `npm run dev` and the packaged .exe:
- *   - dev        -> <repo root>/logs        (process.cwd() is the project root)
- *   - packaged   -> <folder of the .exe>/logs, or, if that isn't writable
- *                   (e.g. an install under Program Files), the always-writable
- *                   userData folder as a fallback.
+ * `npm run dev` and the packaged .exe both append to the SAME file - the one
+ * in the project root - so there is a single log to open rather than one per
+ * launch mode:
+ *   D:\simcbx-papl\logs\laser-marker.log
+ *
+ * That path is absolute because a packaged .exe has no notion of a "project
+ * root": it runs from wherever it was installed, and process.cwd() there is
+ * the launch directory, not this checkout. Hence PROJECT_LOG_DIR below - edit
+ * it if the checkout moves, or set the LASER_LOG_DIR env var to override it
+ * at runtime.
+ *
+ * On any machine without this checkout the folder cannot be created, so the
+ * resolver falls through to a logs folder beside the .exe and finally to
+ * userData. Logging degrades to a different path rather than dying silently.
+ * The folder is created automatically on first write.
  */
-/** Candidate log folders, in priority order, depending on dev vs packaged. */
+const PROJECT_LOG_DIR = 'D:\\simcbx-papl\\logs'
+
+/** Candidate log folders, in priority order. */
 function candidateDirs(): string[] {
-  if (!app.isPackaged) {
-    // Dev: repo root /logs (process.cwd() is the project root under npm run dev)
-    return [path.join(process.cwd(), 'logs')]
-  }
-  // Packaged: prefer a logs folder next to the .exe (easy to find), then fall
-  // back to the always-writable userData folder.
-  return [
-    path.join(path.dirname(app.getPath('exe')), 'logs'),
-    path.join(app.getPath('userData'), 'logs')
-  ]
+  const dirs: string[] = []
+  // Runtime override wins, so a deployed copy can be redirected without a rebuild.
+  if (process.env.LASER_LOG_DIR) dirs.push(process.env.LASER_LOG_DIR)
+  // The shared target: same file from dev and from the .exe.
+  dirs.push(PROJECT_LOG_DIR)
+  // Fallbacks for a machine that has no checkout at the path above.
+  dirs.push(
+    app.isPackaged
+      ? path.join(path.dirname(app.getPath('exe')), 'logs')
+      : path.join(process.cwd(), 'logs')
+  )
+  dirs.push(path.join(app.getPath('userData'), 'logs'))
+  return dirs
 }
 
 /**
