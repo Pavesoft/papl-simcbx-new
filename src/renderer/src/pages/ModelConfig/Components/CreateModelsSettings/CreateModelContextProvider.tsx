@@ -179,8 +179,11 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
         successNotification({ title: 'Success', message: 'Model Settings Saved Successfully' })
         navigate('/model-config')
       })
-      .catch(() => {
-        errorNotification({ title: 'Error', message: 'Something went wrong' })
+      .catch((err) => {
+        errorNotification({
+          title: 'Error',
+          message: err instanceof Error ? err.message : 'Something went wrong'
+        })
       })
   }
 

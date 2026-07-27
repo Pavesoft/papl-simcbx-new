@@ -26,7 +26,9 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
             form.setValues({
               // ...data,
               modelName: data.modelName + ' COPY',
-              programNo: data.programNo,
+              // programNo is @unique - reset it so the duplicate doesn't clash
+              // with the source model; the operator assigns a new program no.
+              programNo: 0,
               rejectionBin: data.rejectionBin ?? false,
               lightCurtain: data.lightCurtain ?? false,
               doorLimitSwitch: data.doorLimitSwitch ?? false,
@@ -102,7 +104,10 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
               s6SceneNo: Number(data.s6SceneNo ?? 0),
               stage7Check: data.stage7Check ?? false,
               markingCheck: data.markingCheck ?? false,
-              partNo: String(data.partNo ?? ''),
+              // partNo is @unique - blank it so the duplicate doesn't reuse the
+              // source model's part number (which always failed the unique
+              // constraint). The operator enters a fresh part number.
+              partNo: '',
               revNo: String(data.revNo ?? ''),
               fileName: String(data.fileName ?? ''),
               stage8Check: data.stage8Check ?? false,
@@ -362,22 +367,13 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
         navigate('/model-config')
       })
       .catch((e) => {
-        if (e?.message && e?.message.includes('Unique constraint')) {
-          // Try extracting the unique constraint field with regex
-          const match = e.message.match(/Unique constraint failed on field\(s\):\s*(\S+)/)
-          if (match) {
-            const uniqueConstraintField = match[1]
-            errorNotification({
-              title: 'Error',
-              message: `${uniqueConstraintField} already exists. Please use a different value.`
-            })
-          } else {
-            errorNotification({ title: 'Error', message: 'Something went wrong' })
-          }
-        } else {
-          console.error('Unexpected error:', e) // Log unexpected errors for debugging
-          errorNotification({ title: 'Error', message: 'Something went wrong' })
-        }
+        // The backend already translates unique-constraint (and other) failures
+        // into a human-readable message, so surface it directly.
+        console.error('Model setting save failed:', e)
+        errorNotification({
+          title: 'Error',
+          message: e instanceof Error ? e.message : 'Something went wrong'
+        })
       })
   }
   const handleDuplicateItem = () => {
@@ -388,27 +384,17 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
 
     unwrap(api.modelSettings.create(payload))
       .then(() => {
-        close()
         successNotification({ title: 'Success', message: 'Model Settings Saved Successfully' })
         navigate('/model-config')
       })
       .catch((e) => {
-        if (e?.message && e?.message.includes('Unique constraint')) {
-          // Try extracting the unique constraint field with regex
-          const match = e.message.match(/Unique constraint failed on field\(s\):\s*(\S+)/)
-          if (match) {
-            const uniqueConstraintField = match[1]
-            errorNotification({
-              title: 'Error',
-              message: `${uniqueConstraintField} already exists. Please use a different value.`
-            })
-          } else {
-            errorNotification({ title: 'Error', message: 'Something went wrong' })
-          }
-        } else {
-          console.error('Unexpected error:', e) // Log unexpected errors for debugging
-          errorNotification({ title: 'Error', message: 'Something went wrong' })
-        }
+        // The backend already translates unique-constraint (and other) failures
+        // into a human-readable message, so surface it directly.
+        console.error('Model setting save failed:', e)
+        errorNotification({
+          title: 'Error',
+          message: e instanceof Error ? e.message : 'Something went wrong'
+        })
       })
   }
   const handleSave = () => {
