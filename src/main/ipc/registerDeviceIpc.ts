@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import { IPC } from '@shared/ipc.types'
+import { IPC, type LaserLogPayload } from '@shared/ipc.types'
 import { handleWithEnvelope } from './envelope'
 import { getBarcodeScanner } from '../devices/barcodeScanner'
 import { getLaserClient, type ConnectionStatus } from '../devices/laserMarker'
@@ -73,6 +73,15 @@ export function registerDeviceIpc(): void {
       }
     }
   )
+
+  // Fire-and-forget log channel: the renderer's laser trigger flow ships its
+  // log lines here so they land in the same laser-marker.log file as the
+  // main-process socket/IPC logs.
+  ipcMain.on(IPC.LASER_LOG, (_e, payload: LaserLogPayload) => {
+    if (payload && payload.level && typeof payload.message === 'string') {
+      laserLog.fromRenderer(payload.level, payload.message, payload.meta)
+    }
+  })
 
   handleWithEnvelope(IPC.PART_DATA_EXPORT, exportPartDataToExcel)
 }

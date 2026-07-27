@@ -5,6 +5,7 @@ import type { ModelSerialNumber, ModelSetting, PartData, PortalUser, Prisma } fr
 import type {
   DbResult,
   ExportToExcelResult,
+  LaserLogPayload,
   LaserMarkResult,
   LaserReadyResult,
   PartDataListParams,
@@ -114,7 +115,9 @@ const api = {
       markName: string
       content: string
     }): Promise<LaserMarkResult> => ipcRenderer.invoke(IPC.LASER_MARK, input),
-    onStatus: subscribe<string>(IPC.LASER_STATUS)
+    onStatus: subscribe<string>(IPC.LASER_STATUS),
+    // Fire-and-forget: send a renderer log line to be written to laser-marker.log
+    log: (payload: LaserLogPayload): void => ipcRenderer.send(IPC.LASER_LOG, payload)
   },
 
   plc: {

@@ -12,6 +12,7 @@ import { useGlobalContext } from '../../shared/ContextProviders/GlobalContextPro
 import { STATUS_CODE_MAP } from '../../shared/Constants/general.const'
 import { dumpPartData } from './dumpPartData'
 import { triggerLaserMarker } from './triggerLaserMarker'
+import { laserLog } from './laserLog'
 import { triggerScanner } from './triggerScanner'
 import DisplacementGraph from './components/DisplacementGraph'
 import { generatePartSerialNumber } from './generatePartSerialNumber'
@@ -88,12 +89,14 @@ const AutoMode = () => {
     let dumpServiced = true
 
     if (shouldTriggerLaser) {
+      laserLog.info('Laser trigger bit rising edge detected (M1904 low->high)')
       if (!isModelReady) {
         laserServiced = false
-        console.warn("model or model details missing therefore can't trigger laser marker")
+        laserLog.warn("Model or model details missing - can't trigger laser marker (will retry)")
       } else if (laserInProgress.current) {
         // previous marking still running - leave the edge pending so it retries
         laserServiced = false
+        laserLog.warn('Previous marking still in progress - leaving trigger edge pending')
       } else {
         laserInProgress.current = true
         ;(async () => {
@@ -123,7 +126,10 @@ const AutoMode = () => {
               )
             }
           } catch (error) {
-            console.error('Failed to trigger laser marker', error)
+            laserLog.error(
+              'Failed to trigger laser marker',
+              error instanceof Error ? error.message : String(error)
+            )
           } finally {
             // Make sure this flag is reset
             // It makes sure the same logic doesn't end up running redundantly
@@ -134,8 +140,8 @@ const AutoMode = () => {
             // fresh rising edge and retries this part, instead of consuming the
             // trigger and skipping it - the cause of rare (~1-in-100) misses.
             if (!marked) {
-              console.log(
-                '⚠️ Laser marking did NOT happen for this part - releasing the trigger edge to retry on the next poll'
+              laserLog.warn(
+                'Laser marking did NOT happen for this part - releasing the trigger edge to retry on the next poll'
               )
               plcTriggerBitsPrevValue.current.laserMarkingTriggerBit = false
             }

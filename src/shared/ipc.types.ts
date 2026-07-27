@@ -58,6 +58,16 @@ export interface LaserMarkResult {
   error?: string
 }
 
+/** Severity levels shared by the main and renderer laser loggers. */
+export type LaserLogLevel = 'INFO' | 'TX' | 'RX' | 'WARN' | 'ERROR'
+
+/** A log line shipped from the renderer to the main process to be persisted. */
+export interface LaserLogPayload {
+  level: LaserLogLevel
+  message: string
+  meta?: unknown
+}
+
 export interface ExportToExcelResult {
   filePath: string
 }
@@ -112,6 +122,7 @@ export const IPC = {
   LASER_READY: 'laser-ready',
   LASER_MARK: 'laser-mark',
   LASER_STATUS: 'laser-status', // push
+  LASER_LOG: 'laser-log', // renderer -> main, fire-and-forget
   // plc
   PLC_CONNECT: 'plc-connect',
   PLC_DISCONNECT: 'plc-disconnect',
