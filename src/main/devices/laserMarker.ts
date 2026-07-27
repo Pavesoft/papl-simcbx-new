@@ -21,7 +21,10 @@ type PendingResponse = {
 export class LaserClient extends EventEmitter {
   private client: net.Socket | null = null
   private reconnectTimeout: NodeJS.Timeout | null = null
+  private connectTimeout: NodeJS.Timeout | null = null
   private _RECONNECT_DELAY = 3000 // ms
+  private _CONNECT_TIMEOUT = 10000 // ms - abort a connect attempt that hangs
+  private _KEEPALIVE_DELAY = 5000 // ms - start TCP keepalive probes after 5s idle
   public status: ConnectionStatus = 'disconnected'
   private rxBuffer = ''
   private destroyed = false
@@ -52,7 +55,28 @@ export class LaserClient extends EventEmitter {
 
     this.client = new net.Socket()
 
+    // Send command/response frames immediately (no Nagle batching), and let the
+    // OS send TCP keepalive probes so a dead/half-open peer is detected in
+    // seconds instead of the ~2h default - otherwise a silent link drop leaves
+    // us stuck "connected" while every mark quietly times out.
+    this.client.setNoDelay(true)
+    this.client.setKeepAlive(true, this._KEEPALIVE_DELAY)
+
+    // Guard against a connect attempt that never resolves (device unreachable):
+    // abort it and fall into the normal reconnect cycle instead of hanging in
+    // the 'connecting' state, which would block all future connect attempts.
+    this.connectTimeout = setTimeout(() => {
+      if (this.status === 'connecting') {
+        laserLog.error(`Connect attempt timed out after ${this._CONNECT_TIMEOUT} ms`)
+        this.handleDisconnect()
+      }
+    }, this._CONNECT_TIMEOUT)
+
     this.client.connect(this.port, this.host, () => {
+      if (this.connectTimeout) {
+        clearTimeout(this.connectTimeout)
+        this.connectTimeout = null
+      }
       this.status = 'connected'
       this.emit('status', this.status)
       laserLog.info(`Connected to laser device at ${this.host}:${this.port}`)
@@ -109,6 +133,11 @@ export class LaserClient extends EventEmitter {
     this.pendingResponses = []
     this.rxBuffer = ''
 
+    if (this.connectTimeout) {
+      clearTimeout(this.connectTimeout)
+      this.connectTimeout = null
+    }
+
     if (this.client) {
       this.client.destroy()
       this.client = null
@@ -152,6 +181,13 @@ export class LaserClient extends EventEmitter {
         this.pendingResponses = this.pendingResponses.filter((p) => p.timeout !== timeout)
         laserLog.error(`Timed out after ${timeoutMs} ms waiting for "${label}"`)
         reject(new Error(`Laser response timeout (${label})`))
+        // A missing reply is the classic symptom of a half-open socket that
+        // still looks "connected". Tear it down and reconnect so the NEXT
+        // attempt gets a fresh link instead of timing out again and again.
+        if (this.status === 'connected') {
+          laserLog.warn(`Forcing reconnect - no reply to "${label}" (socket likely dead)`)
+          this.handleDisconnect()
+        }
       }, timeoutMs)
 
       this.pendingResponses.push({
@@ -176,6 +212,7 @@ export class LaserClient extends EventEmitter {
   public close(): void {
     this.destroyed = true
     if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout)
+    if (this.connectTimeout) clearTimeout(this.connectTimeout)
     this.status = 'disconnected'
     this.emit('status', this.status)
     this.client?.destroy()

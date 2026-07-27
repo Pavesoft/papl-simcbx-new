@@ -1,15 +1,17 @@
 import fs from 'fs'
 import path from 'path'
-import { app } from 'electron'
 
 /**
  * Dedicated logger for the laser marker so that whenever a mark "doesn't
  * happen" we have a timestamped, level-tagged trail of exactly what the device
- * did (or failed to do). Every line lands in userData/logs/laser.log and is
+ * did (or failed to do). Every line lands in <project>/logs/laser.log and is
  * mirrored to the console. Errors are highlighted in both places.
+ *
+ * The log folder lives in the project directory (process.cwd() is the repo root
+ * under `npm run dev`). It is created automatically on first write.
  */
 
-const LOG_DIR = path.join(app.getPath('userData'), 'logs')
+const LOG_DIR = path.join(process.cwd(), 'logs')
 const LOG_FILE = path.join(LOG_DIR, 'laser.log')
 
 export type LaserLogLevel = 'INFO' | 'TX' | 'RX' | 'WARN' | 'ERROR'
