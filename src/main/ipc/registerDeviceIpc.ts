@@ -3,7 +3,7 @@ import { IPC, type LaserLogPayload } from '@shared/ipc.types'
 import { handleWithEnvelope } from './envelope'
 import { getBarcodeScanner } from '../devices/barcodeScanner'
 import { getLaserClient, type ConnectionStatus } from '../devices/laserMarker'
-import { laserLog } from '../devices/laserLogger'
+import { laserLog, LASER_LOG_FILE } from '../devices/laserLogger'
 import { exportPartDataToExcel } from '../services/report.service'
 
 function broadcast(channel: string, payload: unknown): void {
@@ -13,6 +13,7 @@ function broadcast(channel: string, payload: unknown): void {
 }
 
 export function initDevices(): void {
+  laserLog.info(`Laser marker logging to ${LASER_LOG_FILE}`)
   const scanner = getBarcodeScanner()
   const laser = getLaserClient()
 
