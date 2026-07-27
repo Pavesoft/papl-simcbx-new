@@ -1,5 +1,5 @@
 import './env'
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, dialog, ipcMain } from 'electron'
 import { appendFileSync } from 'fs'
 
 process.on('uncaughtException', (err) => {
@@ -27,6 +27,32 @@ import { node } from './plc/plcNode'
 import { getPLCConnectionStatus, startPolling, stopAllPolling } from './plcService'
 
 let mainWindow: BrowserWindow | null = null
+
+// Only one copy of the HMI may run at a time. Two processes would both poll the
+// PLC on the same 800ms cycle and open competing sockets to the laser and the
+// scanner, so a second launch is refused rather than allowed to interfere.
+// Double-clicking the shortcut again therefore tells the user and brings the
+// window that IS running back to the front.
+if (!app.requestSingleInstanceLock()) {
+  // showErrorBox is the only dialog API usable before the 'ready' event, and
+  // the second instance quits well before it gets there.
+  dialog.showErrorBox(
+    'simcbx-papl is already running',
+    'The software is already open on this computer.\n\n' +
+      'Only one copy can run at a time - switch to the window that is already open.'
+  )
+  // exit(), not quit(): nothing has been started in this process yet, so there
+  // is nothing to shut down, and it stops the rest of this file from running.
+  app.exit(0)
+}
+
+// Raised in the FIRST instance whenever another launch is refused above.
+app.on('second-instance', () => {
+  if (!mainWindow || mainWindow.isDestroyed()) return
+  if (mainWindow.isMinimized()) mainWindow.restore()
+  mainWindow.show()
+  mainWindow.focus()
+})
 
 function createWindow(): void {
   // Fullscreen kiosk-style HMI window (layouts assume 100vh).
