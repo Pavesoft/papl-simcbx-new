@@ -20,22 +20,39 @@ import type { LaserLogLevel } from '@shared/ipc.types'
  *                   (e.g. an install under Program Files), the always-writable
  *                   userData folder as a fallback.
  */
-function resolveLogDir(): string {
+/** Candidate log folders, in priority order, depending on dev vs packaged. */
+function candidateDirs(): string[] {
   if (!app.isPackaged) {
-    return path.join(process.cwd(), 'logs')
+    // Dev: repo root /logs (process.cwd() is the project root under npm run dev)
+    return [path.join(process.cwd(), 'logs')]
   }
+  // Packaged: prefer a logs folder next to the .exe (easy to find), then fall
+  // back to the always-writable userData folder.
+  return [
+    path.join(path.dirname(app.getPath('exe')), 'logs'),
+    path.join(app.getPath('userData'), 'logs')
+  ]
+}
 
-  // Prefer a logs folder right next to the executable so it's easy to find.
-  const nextToExe = path.join(path.dirname(app.getPath('exe')), 'logs')
-  try {
-    fs.mkdirSync(nextToExe, { recursive: true })
-    fs.accessSync(nextToExe, fs.constants.W_OK)
-    return nextToExe
-  } catch {
-    // Install dir is read-only (Program Files, etc.) - fall back to userData,
-    // which is guaranteed writable: %APPDATA%\simcbx-papl\logs on Windows.
-    return path.join(app.getPath('userData'), 'logs')
+/**
+ * Pick the first candidate we can actually WRITE to. On Windows fs.accessSync
+ * is unreliable for directories, so we probe with a real write+delete instead.
+ */
+function resolveLogDir(): string {
+  const candidates = candidateDirs()
+  for (const dir of candidates) {
+    try {
+      fs.mkdirSync(dir, { recursive: true })
+      const probe = path.join(dir, '.write-test')
+      fs.writeFileSync(probe, 'ok')
+      fs.unlinkSync(probe)
+      return dir
+    } catch {
+      // not writable - try the next candidate
+    }
   }
+  // Last resort: userData (best effort even if the probe failed above).
+  return path.join(app.getPath('userData'), 'logs')
 }
 
 const LOG_DIR = resolveLogDir()
@@ -76,11 +93,14 @@ function write(
   const marker = level === 'ERROR' ? ' ‼️ ' : ' '
   const fileLine = `[${ts}] [${source}] [${level}]${marker}${message}${metaStr}\n`
 
-  fs.mkdir(LOG_DIR, { recursive: true }, () => {
-    fs.appendFile(LOG_FILE, fileLine, (err) => {
-      if (err) console.error('Failed to write laser log:', err)
-    })
-  })
+  // Synchronous append: this is a low-frequency diagnostic log, and writing
+  // synchronously keeps lines in exact order and flushed to disk immediately -
+  // so a crash mid-mark can't lose the line that explains why.
+  try {
+    fs.appendFileSync(LOG_FILE, fileLine)
+  } catch (err) {
+    console.error('Failed to write laser log:', err)
+  }
 
   // Mirror to the console with colour so errors are impossible to miss.
   const consoleLine = `${CONSOLE_STYLE[level]}[${ts}] [LASER ${source} ${level}]${RESET} ${message}${metaStr}`
