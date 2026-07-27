@@ -43,7 +43,9 @@ export function registerDeviceIpc(): void {
     laserLog.info(`READY check requested (socket status: ${laser.status})`)
     try {
       const isReady = await laser.waitForReady()
-      laserLog.info(`READY check result: ${isReady ? 'READY' : 'NOT READY'} (${Date.now() - startedAt} ms)`)
+      laserLog.info(
+        `READY check result: ${isReady ? 'READY' : 'NOT READY'} (${Date.now() - startedAt} ms)`
+      )
       return { ready: isReady }
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err)

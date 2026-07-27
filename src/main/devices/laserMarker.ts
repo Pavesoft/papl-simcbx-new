@@ -201,7 +201,9 @@ export class LaserClient extends EventEmitter {
   }
 
   public startMarking(templateName: string, markName: string, content: string): boolean {
-    laserLog.info(`Start marking template="${templateName}" mark="${markName}" content="${content}"`)
+    laserLog.info(
+      `Start marking template="${templateName}" mark="${markName}" content="${content}"`
+    )
     return this.sendRaw(`<L${templateName}><D${markName},${content}><X>`)
   }
 
