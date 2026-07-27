@@ -14,20 +14,29 @@ export const triggerLaserMarker = async (
   markName: string,
   content: string
 ): Promise<boolean> => {
+  const startedAt = Date.now()
   try {
-    laserLog.info(`Trigger laser marker: template="${templateName}" content="${content}"`)
+    laserLog.info(
+      `>>> PLC commanded START marking: template="${templateName}" field="${markName}" content="${content}"`
+    )
 
     // 1. Check laser READY status (not just connected)
-    const { ready } = await api.laser.ready()
+    const readyAt = Date.now()
+    const { ready, error: readyError } = await api.laser.ready()
     if (!ready) {
       plcWriter([{ address: 'M1920', value: true }]) // Laser not ready bit
-      laserLog.warn('Laser not ready - wrote M1920, aborting this attempt')
+      laserLog.warn(
+        `NOT MARKED ❌ - laser reported NOT READY (${Date.now() - readyAt} ms)${
+          readyError ? `: ${readyError}` : ''
+        }. Wrote M1920. Trigger will retry.`
+      )
       return false
     }
     plcWriter([{ address: 'M1926', value: true }]) // Laser ready bit
-    laserLog.info('Laser ready - wrote M1926, sending mark command')
+    laserLog.info(`Laser READY (${Date.now() - readyAt} ms) - wrote M1926, sending mark command`)
 
     // 2. Call the full mark flow
+    const markAt = Date.now()
     const result = await api.laser.mark({
       template: templateName,
       markName,
@@ -44,16 +53,27 @@ export const triggerLaserMarker = async (
       //write the content in PLC along with laser print OK bit
       plcWriter([{ address: 'M1921', value: true }])
       plcWriter([{ address: 'D669', value: 0 }, ...markContentWrites]) // Laser print OK bit
-      laserLog.info(`Laser marking completed - wrote M1921 and content to D670+ for "${content}"`)
+      laserLog.info(
+        `MARKED ✅ content="${content}" (mark ${Date.now() - markAt} ms, total ${
+          Date.now() - startedAt
+        } ms) - wrote M1921 + content to D670+`
+      )
       return true
     } else {
       plcWriter([{ address: 'M1922', value: true }]) // Laser print error bit
-      laserLog.error(`Laser mark failed - wrote M1922: ${result.error ?? 'unknown error'}`)
+      laserLog.error(
+        `NOT MARKED ❌ content="${content}" - mark flow failed (${Date.now() - markAt} ms): ${
+          result.error ?? 'unknown error'
+        }. Wrote M1922. Trigger will retry.`
+      )
       return false
     }
   } catch (err) {
     plcWriter([{ address: 'M1922', value: true }])
-    laserLog.error('Laser error - wrote M1922', err instanceof Error ? err.message : String(err))
+    laserLog.error(
+      `NOT MARKED ❌ content="${content}" - exception after ${Date.now() - startedAt} ms. Wrote M1922. Trigger will retry.`,
+      err instanceof Error ? err.message : String(err)
+    )
     return false
   }
 }

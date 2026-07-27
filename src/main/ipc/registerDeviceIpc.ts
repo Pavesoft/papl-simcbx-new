@@ -38,12 +38,16 @@ export function registerDeviceIpc(): void {
   })
 
   ipcMain.handle(IPC.LASER_READY, async () => {
+    const laser = getLaserClient()
+    const startedAt = Date.now()
+    laserLog.info(`READY check requested (socket status: ${laser.status})`)
     try {
-      const isReady = await getLaserClient().waitForReady()
+      const isReady = await laser.waitForReady()
+      laserLog.info(`READY check result: ${isReady ? 'READY' : 'NOT READY'} (${Date.now() - startedAt} ms)`)
       return { ready: isReady }
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err)
-      laserLog.error(`Ready check failed: ${error}`)
+      laserLog.error(`READY check FAILED after ${Date.now() - startedAt} ms: ${error}`)
       return { ready: false, error }
     }
   })
@@ -52,24 +56,35 @@ export function registerDeviceIpc(): void {
     IPC.LASER_MARK,
     async (_e, input: { template: string; markName: string; content: string }) => {
       const laser = getLaserClient()
+      const startedAt = Date.now()
+      laserLog.info(
+        `MARK requested: content="${input.content}" template="${input.template}" (socket status: ${laser.status})`
+      )
       try {
         if (laser.status !== 'connected') {
-          throw new Error('Laser not connected')
+          throw new Error(`laser not connected (status: ${laser.status})`)
         }
+        // Listen for <XE> BEFORE sending so a fast reply is never missed.
         const waitDone = laser.waitForMarkComplete(20000)
         const sent = laser.startMarking(input.template, input.markName, input.content)
         if (!sent) {
           // Swallow the now-orphaned waiter's eventual timeout rejection, then
           // fail fast instead of blocking the caller for the full 20s window.
           waitDone.catch(() => {})
-          throw new Error('Failed to send mark command - laser not connected')
+          throw new Error('failed to send mark command (write returned false)')
         }
+        laserLog.info(`MARK command sent, waiting for completion (<XE>)...`)
         await waitDone
 
+        laserLog.info(
+          `MARK DONE ✅ content="${input.content}" in ${Date.now() - startedAt} ms (got <XE>)`
+        )
         return { success: true, content: input.content }
       } catch (err) {
         const error = err instanceof Error ? err.message : String(err)
-        laserLog.error(`Mark failed for content="${input.content}": ${error}`)
+        laserLog.error(
+          `MARK NOT DONE ❌ content="${input.content}" after ${Date.now() - startedAt} ms: ${error}`
+        )
         return { success: false, error }
       }
     }
