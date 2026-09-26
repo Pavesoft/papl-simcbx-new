@@ -13,9 +13,12 @@ import { DeviceOffsets, PLCConfig } from './plcTypes'
  * !! COMMISSIONING TODO !!
  * These offsets must match the PLC's "Modbus Device Assignment" parameters
  * (GX Works3). M@8192 and D@0 are the values proven on the otter FX5U;
- * the X / Y / R offsets are placeholders and MUST be calibrated against the
- * real PLC. R (file registers) may not be mapped at all by default — if so,
- * the assignment has to be enabled on the PLC side.
+ * the X / Y offsets are placeholders and MUST be calibrated against the
+ * real PLC.
+ * R (file registers) is not assigned by default. It needs this Holding Register
+ * entry in GX Works3 (Module Parameter > Ethernet Port > MODBUS/TCP Settings >
+ * MODBUS Device Assignment): device R, start R0, points 3000, start address 40000
+ * (covers R0-R2999 at 40000-42999). 30000 is already taken on this PLC.
  * Every offset can be overridden per-site via env (see below).
  */
 const envOffset = (name: string, fallback: number): number => {
@@ -29,7 +32,7 @@ export const DEVICE_OFFSETS: DeviceOffsets = {
   Y: { table: 'coil', offset: envOffset('PLC_OFFSET_Y', 0), octal: true },
   X: { table: 'discrete', offset: envOffset('PLC_OFFSET_X', 0), octal: true, readOnly: true },
   D: { table: 'holding', offset: envOffset('PLC_OFFSET_D', 0) },
-  R: { table: 'holding', offset: envOffset('PLC_OFFSET_R', 30000) }
+  R: { table: 'holding', offset: envOffset('PLC_OFFSET_R', 40000) }
 }
 
 export const PLC_CONFIG: PLCConfig = {
