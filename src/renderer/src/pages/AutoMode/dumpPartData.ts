@@ -23,41 +23,41 @@ export const dumpPartData = async (
     shift: getCurrentShift(new Date()),
     programNo: selectedModel.programNo,
     modelName: selectedModel.modelName,
-    stage1Status: statusMap[plcReader('R0') as number],
-    stage2Status: statusMap[plcReader('R1') as number],
+    stage1Status: statusMap[plcReader('D7900') as number],
+    stage2Status: statusMap[plcReader('D7901') as number],
     stage2Min: String(selectedModel.resistanceMin),
     stage2Max: String(selectedModel.resistanceMax),
     stage2Resistance: String(
-      convert2WordstoFloat(plcReader('R2') as number, plcReader('R3') as number)
+      convert2WordstoFloat(plcReader('D7902') as number, plcReader('D7903') as number)
     ),
-    stage3Status: statusMap[plcReader('R4') as number],
+    stage3Status: statusMap[plcReader('D7904') as number],
     stage3Impedance: String(
-      convert2WordstoFloat(plcReader('R5') as number, plcReader('R6') as number)
+      convert2WordstoFloat(plcReader('D7905') as number, plcReader('D7906') as number)
     ),
     stage3Min: String(selectedModel.impedanceMin),
     stage3Max: String(selectedModel.impedanceMax),
-    stage4Status: statusMap[plcReader('R7') as number],
-    stage4Cb1PartialLoad: bigDecimalDivide(plcReader('R8') ?? 0, 100),
+    stage4Status: statusMap[plcReader('D7907') as number],
+    stage4Cb1PartialLoad: bigDecimalDivide(plcReader('D7908') ?? 0, 100),
     stage4Cb1PartialLoadMin: String(selectedModel.s4Cb1BrushPartialLoadMin),
     stage4Cb1PartialLoadMax: String(selectedModel.s4Cb1BrushPartialLoadMax),
-    stage4Cb1FullLoad: bigDecimalDivide(plcReader('R9') ?? 0, 100),
+    stage4Cb1FullLoad: bigDecimalDivide(plcReader('D7909') ?? 0, 100),
     stage4Cb1FullLoadMin: String(selectedModel.s4Cb1BrushFullLoadMin),
     stage4Cb1FullLoadMax: String(selectedModel.s4Cb1BrushFullLoadMax),
-    stage5Status: statusMap[plcReader('R10') as number],
-    stage5Cb2PartialLoad: bigDecimalDivide(plcReader('R12') ?? 0, 100),
+    stage5Status: statusMap[plcReader('D7910') as number],
+    stage5Cb2PartialLoad: bigDecimalDivide(plcReader('D7912') ?? 0, 100),
     stage5Cb2PartialLoadMin: String(selectedModel.s5Cb2BrushPartialLoadMin),
     stage5Cb2PartialLoadMax: String(selectedModel.s5Cb2BrushPartialLoadMax),
-    stage5Cb2FullLoad: bigDecimalDivide(plcReader('R13') ?? 0, 100),
+    stage5Cb2FullLoad: bigDecimalDivide(plcReader('D7913') ?? 0, 100),
     stage5Cb2FullLoadMin: String(selectedModel.s5Cb2BrushFullLoadMin),
     stage5Cb2FullLoadMax: String(selectedModel.s5Cb2BrushFullLoadMax),
-    stage5Bop1Status: statusMap[plcReader('R11') as number],
-    stage6Bop2Status: statusMap[plcReader('R14') as number],
-    stage6BearingHeightStatus: statusMap[plcReader('R15') as number],
+    stage5Bop1Status: statusMap[plcReader('D7911') as number],
+    stage6Bop2Status: statusMap[plcReader('D7914') as number],
+    stage6BearingHeightStatus: statusMap[plcReader('D7915') as number],
     barcode: barCode,
-    stage7Status: statusMap[plcReader('R16') as number],
+    stage7Status: statusMap[plcReader('D7916') as number],
     stage8ScanResult: barCode,
-    stage8Status: statusMap[plcReader('R17') as number],
-    result: statusMap[plcReader('R18') as number]
+    stage8Status: statusMap[plcReader('D7917') as number],
+    result: statusMap[plcReader('D7918') as number]
   }
 
   try {
