@@ -118,6 +118,9 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
               gripperGrip: data.gripperGrip ?? false,
               gripperTime: Number(data.gripperTime ?? 0),
               scanCheck: data.scanCheck ?? false,
+              stage7ClampCylChk: data.stage7ClampCylChk ?? false,
+              stage7ClampCylDownRdChk: data.stage7ClampCylDownRdChk ?? false,
+              stage7ClampTime: Number(data.stage7ClampTime ?? 0),
               servoSpeed: Number(data.servoSpeed ?? 0),
               partPickPOS: Number(data.partPickPOS ?? 0),
               pressPosition1: Number(data.pressPosition1 ?? 0),
@@ -214,6 +217,9 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
               gripperGrip: data.gripperGrip ?? false,
               gripperTime: Number(data.gripperTime ?? 0),
               scanCheck: data.scanCheck ?? false,
+              stage7ClampCylChk: data.stage7ClampCylChk ?? false,
+              stage7ClampCylDownRdChk: data.stage7ClampCylDownRdChk ?? false,
+              stage7ClampTime: Number(data.stage7ClampTime ?? 0),
               servoSpeed: Number(data.servoSpeed ?? 0),
               partPickPOS: Number(data.partPickPOS ?? 0),
               pressPosition1: Number(data.pressPosition1 ?? 0),
@@ -340,6 +346,11 @@ export function ViewModelContextProvider({ children }: { children: ReactNode }) 
       gripperTime: 0.1,
 
       scanCheck: true,
+
+      stage7ClampCylChk: true,
+      stage7ClampCylDownRdChk: true,
+      stage7ClampTime: 0.1,
+
       servoSpeed: 0.1,
 
       partPickPOS: 0,

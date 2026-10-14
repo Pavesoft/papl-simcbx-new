@@ -10,7 +10,7 @@ const Stage1To5 = () => {
   const { form } = useCreateModelContext()
 
   return (
-    <Flex h={'calc(90vh - 50px)'} columnGap={20} mt={12}>
+    <Flex columnGap={20} mt={12}>
       <Flex w={'25%'} direction={'column'} rowGap={20}>
         <Common />
         <Flex direction={'column'}>

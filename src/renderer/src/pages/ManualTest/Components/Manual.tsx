@@ -332,30 +332,30 @@ const Manual = () => {
               />
             </Flex>
           </Flex>
-          {/* <Flex direction={"column"}>
-          <Flex bg="#262626" w={"100%"} style={{ borderRadius: "8px 8px 0px 0px" }}>
-            <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
-              STAGE 7
-            </HeadingMediumSemiBold>
+          <Flex direction={'column'} mt={4}>
+            <Flex bg="#262626" w={'100%'} style={{ borderRadius: '8px 8px 0px 0px' }}>
+              <HeadingMediumSemiBold color="#F0E9F1" pl={16} pt={4} pb={4}>
+                STAGE 7
+              </HeadingMediumSemiBold>
+            </Flex>
+            <Flex
+              style={{ borderRadius: '0px 0px 8px 8px ' }}
+              bg="#171717"
+              w={'100%'}
+              direction="column"
+              rowGap={16}
+              pt={16}
+              pb={16}
+            >
+              <CylinderTest
+                label="CLAMP CYL FWD"
+                writeAddress="M1081"
+                opHealthAddress="M1082"
+                reedFwdAddress="X106"
+                reedRetAddress="X107"
+              />
+            </Flex>
           </Flex>
-          <Flex
-            style={{ borderRadius: "0px 0px 8px 8px " }}
-            bg="#171717"
-            w={"100%"}
-            direction="column"
-            rowGap={16}
-            pt={16}
-            pb={16}
-          >
-        
-            <StatusSingleButtonComponent
-              label="LASER MARKING"
-              buttonLabel="START"
-              writeAddress="M1052"
-              opHealthAddress="M1053"
-            />
-          </Flex>
-        </Flex> */}
         </Flex>
         <Flex w={'25%'} direction={'column'}>
           <Flex direction={'column'}>

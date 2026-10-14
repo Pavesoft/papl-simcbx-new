@@ -138,6 +138,11 @@ export function CreateModelContextProvider({ children }: { children: ReactNode }
       gripperTime: 0.1,
 
       scanCheck: true,
+
+      stage7ClampCylChk: true,
+      stage7ClampCylDownRdChk: true,
+      stage7ClampTime: 0.1,
+
       servoSpeed: 0.1,
 
       partPickPOS: 0,

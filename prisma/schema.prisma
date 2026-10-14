@@ -52,9 +52,9 @@ enum PortalUserRole {
 }
 
 model ModelSetting {
-    id                        String   @id @default(cuid())
-    modelName                 String   @unique
-    programNo                 Int      @unique
+    id                        String              @id @default(cuid())
+    modelName                 String              @unique
+    programNo                 Int                 @unique
     rejectionBin              Boolean?
     lightCurtain              Boolean?
     doorLimitSwitch           Boolean?
@@ -152,41 +152,43 @@ model ModelSetting {
     // BEARING ANGLE
     bearingAngleCheck         Boolean?
     bearingAngleValue         Decimal?
-
     // BOP 
-    s6BopCheck        Boolean?
-    s6SceneNo         Int?
+    s6BopCheck                Boolean?
+    s6SceneNo                 Int?
     // STAGE 7
-    stage7Check       Boolean?
-    markingCheck      Boolean?
-    partNo            String?             @unique
-    revNo             String?
-    fileName          String?
+    stage7Check               Boolean?
+    markingCheck              Boolean?
+    partNo                    String?             @unique
+    revNo                     String?
+    fileName                  String?
     // STAGE 8
-    stage8Check       Boolean?
+    stage8Check               Boolean?
     // UP/DOWN CYL
-    upDownCylCheck    Boolean?
-    upDownCylUp       Boolean?
-    upDownCylTime     Decimal?
+    upDownCylCheck            Boolean?
+    upDownCylUp               Boolean?
+    upDownCylTime             Decimal?
     // GRIPPER
-    gripperCheck      Boolean?
-    gripperGrip       Boolean?
-    gripperTime       Decimal?
+    gripperCheck              Boolean?
+    gripperGrip               Boolean?
+    gripperTime               Decimal?
     // SCAN
-    scanCheck         Boolean?
+    scanCheck                 Boolean?
+    stage7ClampCylChk         Boolean?
+    stage7ClampCylDownRdChk   Boolean?
+    stage7ClampTime           Decimal?
     // SERVO SPEED
-    servoSpeed        Int?
+    servoSpeed                Int?
     // PART
-    partPickPOS       Int?
-    pressPosition1    Int?
-    pressPosition2    Int?
-    pressPosition3    Int?
-    pressPosition4    Int?
-    pressPosition5    Int?
-    pressPosition6    Int?
-    createdAt         DateTime            @default(now())
-    updatedAt         DateTime            @updatedAt
-    ModelSerialNumber ModelSerialNumber[]
+    partPickPOS               Int?
+    pressPosition1            Int?
+    pressPosition2            Int?
+    pressPosition3            Int?
+    pressPosition4            Int?
+    pressPosition5            Int?
+    pressPosition6            Int?
+    createdAt                 DateTime            @default(now())
+    updatedAt                 DateTime            @updatedAt
+    ModelSerialNumber         ModelSerialNumber[]
 }
 
 model ModelSerialNumber {

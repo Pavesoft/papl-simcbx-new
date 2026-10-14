@@ -78,6 +78,6 @@ export const INPUT_4 = [
   { addr: 'X103', input: 'ST5-CB2 LOAD CELL CYL RET RD' },
   { addr: 'X104', input: 'SPARE' },
   { addr: 'X105', input: 'ANTI PINCH SENSOR' },
-  { addr: 'X106', input: 'SPARE' },
-  { addr: 'X107', input: 'SPARE' }
+  { addr: 'X106', input: 'ST7-CLAMP FWD RD' },
+  { addr: 'X107', input: 'ST7-CLAMP RET RD' }
 ]

@@ -139,8 +139,8 @@ export const ERROR_CODES = [
   { id: 135, message: 'SPARE_135', bit: 'D908.7' },
   { id: 136, message: 'SPARE_136', bit: 'D908.8' },
   { id: 137, message: 'SPARE_137', bit: 'D908.9' },
-  { id: 138, message: 'SPARE_138', bit: 'D908.10' },
-  { id: 139, message: 'SPARE_139', bit: 'D908.11' },
+  { id: 138, message: 'STAGE7- CLAMP FWD ERROR', bit: 'D908.10' },
+  { id: 139, message: 'STAGE7- CLAMP RET ERROR', bit: 'D908.11' },
   { id: 140, message: 'MODEL NOT SELECTED', bit: 'D908.12' }
 ]
 

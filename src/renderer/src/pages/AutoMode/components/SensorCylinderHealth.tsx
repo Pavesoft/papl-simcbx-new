@@ -157,7 +157,10 @@ const SensorCylinderHealth = ({ isCollapsed }) => {
     },
     {
       title: 'STAGE 7',
-      items: [{ bit: 'D631', label: 'DPM MARKING' }]
+      items: [
+        { bit: 'D631', label: 'DPM MARKING' },
+        { bit: 'D644', label: 'CLAMP CYL ' }
+      ]
     },
     {
       title: 'STAGE 8',

@@ -1,4 +1,4 @@
-import { Checkbox, Flex, Switch, Text, TextInput } from '@mantine/core'
+import { Checkbox, Divider, Flex, NumberInput, Switch, Text, TextInput } from '@mantine/core'
 import { useCreateModelContext } from '../CreateModelContextProvider'
 import Stage6 from './components/Stage6'
 import Stage8 from './components/Stage8'
@@ -6,7 +6,7 @@ import Stage8 from './components/Stage8'
 const Stage6To8 = () => {
   const { form } = useCreateModelContext()
   return (
-    <Flex h={'calc(90vh - 50px)'} columnGap={20} mt={12}>
+    <Flex columnGap={20} mt={12}>
       <Flex w={'25%'} direction={'column'} rowGap={20}>
         <Stage6 />
         <Flex direction={'column'}>
@@ -121,6 +121,68 @@ const Stage6To8 = () => {
                     }}
                     {...form.getInputProps('fileName')}
                   />
+                </Flex>
+              </Flex>
+              <Divider />
+              <Flex>
+                <Flex w={'40%'}>
+                  <Checkbox
+                    mt={38}
+                    size="md"
+                    disabled={!form.values.stage7Check}
+                    label={
+                      <Text fw={600} size="lg" c="#E4E4E7">
+                        CLAMP CYL
+                      </Text>
+                    }
+                    {...form.getInputProps('stage7ClampCylChk', { type: 'checkbox' })}
+                  />
+                </Flex>
+                <Flex w={'60%'} justify="space-between">
+                  <Flex direction="column" rowGap={12}>
+                    <Text fw={600} size="lg" c="#E4E4E7">
+                      DOWN
+                    </Text>
+                    <Checkbox
+                      size="md"
+                      disabled={!form.values.stage7Check}
+                      {...form.getInputProps('stage7ClampCylDownRdChk', { type: 'checkbox' })}
+                    />
+                  </Flex>
+
+                  <Flex direction="column" rowGap={12}>
+                    <Text fw={600} size="lg" c="#E4E4E7">
+                      TIME
+                    </Text>
+                    <Flex direction="column">
+                      <NumberInput
+                        hideControls
+                        placeholder="0"
+                        w={95}
+                        decimalScale={2}
+                        fixedDecimalScale
+                        min={0.1}
+                        max={10}
+                        disabled={!form.values.stage7Check}
+                        styles={{
+                          input: {
+                            borderColor: '#737373',
+                            backgroundColor: '#F5F5F5',
+                            fontSize: '20px',
+                            fontWeight: 600,
+                            color: '#3F3F47'
+                          },
+                          label: {
+                            fontSize: '18px'
+                          }
+                        }}
+                        {...form.getInputProps('stage7ClampTime')}
+                      />
+                      <Text size="md" c="#A1A1A1" fw={500}>
+                        SEC
+                      </Text>
+                    </Flex>
+                  </Flex>
                 </Flex>
               </Flex>
             </Flex>

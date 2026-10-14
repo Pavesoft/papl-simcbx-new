@@ -250,12 +250,14 @@ const D708_MAP: WordMap = [
   'scanCheck', // D708.7
   null,
   null,
+  'stage7ClampCylChk', // D708.10
+  'stage7ClampCylDownRdChk', // D708.11
+  null, // D708.12
   null,
   null,
   null,
   null,
-  null,
-  null
+  null // D708.15
 ]
 
 // === 2. Create 16-bit word from booleans ===
@@ -385,6 +387,7 @@ export const dumpModelSettingToPlcWords = (model: ModelSetting): PlcWords => {
   dataWords['D812'] = model.s6SceneNo ?? 0
 
   // Stage 8
+  dataWords['D849'] = model.stage7ClampTime != null ? Number(model.stage7ClampTime) * 10 : 0
   dataWords['D860'] = model.upDownCylTime != null ? Number(model.upDownCylTime) * 10 : 0
   dataWords['D861'] = model.gripperTime != null ? Number(model.gripperTime) * 10 : 0
 

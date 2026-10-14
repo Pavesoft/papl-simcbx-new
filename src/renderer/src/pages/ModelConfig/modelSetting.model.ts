@@ -118,6 +118,10 @@ export interface ModelFormValues {
   gripperTime: number
   // SCAN
   scanCheck: boolean
+  // CLAMP CYL
+  stage7ClampCylChk: boolean
+  stage7ClampCylDownRdChk: boolean
+  stage7ClampTime: number
   // SERVO
   servoSpeed: number
   // PART
