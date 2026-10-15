@@ -70,6 +70,7 @@ export const dumpModelSettingsToPlc = ({
     { address: 'D810', value: words.D810 },
     { address: 'D811', value: words.D811 },
     { address: 'D812', value: words.D812 },
+    { address: 'D849', value: words.D849 },
     { address: 'D860', value: words.D860 },
     { address: 'D861', value: words.D861 },
     { address: 'D862', value: words.D862 },
