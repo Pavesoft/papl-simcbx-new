@@ -132,7 +132,7 @@ export const ERROR_CODES = [
   { id: 128, message: 'SPARE_HOME_ERROR3', bit: 'D908.0' },
   { id: 129, message: 'STAGE5- CAMERA NOT READY', bit: 'D908.1' },
   { id: 130, message: 'STAGE6-CAMERA NOT READY', bit: 'D908.2' },
-  { id: 131, message: 'SPARE_131', bit: 'D908.3' },
+  { id: 131, message: 'STAGE7- CLAMP RET ERROR', bit: 'D908.3' },
   { id: 132, message: 'SPARE_132', bit: 'D908.4' },
   { id: 133, message: 'SPARE_133', bit: 'D908.5' },
   { id: 134, message: 'SPARE_134', bit: 'D908.6' },

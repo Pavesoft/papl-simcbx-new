@@ -29,7 +29,7 @@ import type { LaserLogLevel } from '@shared/ipc.types'
  * userData. Logging degrades to a different path rather than dying silently.
  * The folder is created automatically on first write.
  */
-const PROJECT_LOG_DIR = 'D:\\simcbx-papl\\logs'
+const PROJECT_LOG_DIR = 'D:\\papl-simcbx-new\\logs'
 
 /** Candidate log folders, in priority order. */
 function candidateDirs(): string[] {

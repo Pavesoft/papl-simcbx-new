@@ -16,19 +16,35 @@ import { convertPlcWordsToIntArray } from '../../../shared/util/general.util'
 // Type Definitions
 interface GraphPoint {
   displacement: number
-  stage4Load?: number
-  stage5Load?: number
+  load: number
 }
 
-// Utility to normalize unknown array to number[]
+// Modbus holding registers arrive as unsigned 16-bit (0..65535); convert to signed int16
 const normalizePlcArray = (arr: unknown): number[] => {
   if (!Array.isArray(arr)) return []
-  return arr
-    .map((val) => {
-      const num = Number(val)
-      return isNaN(num) ? null : num
+  return arr.map((val) => {
+    const num = Number(val)
+    if (isNaN(num)) return 0
+    const word = num & 0xffff
+    return word > 0x7fff ? word - 0x10000 : word
+  })
+}
+
+// Pair each displacement sample with the load sample at the same index (same stage),
+// dropping the unfilled (0, 0) slots at the end of the PLC buffer
+const buildStageSeries = (displacement: number[], load: number[]): GraphPoint[] => {
+  const length = Math.min(displacement.length, load.length)
+  let lastIndex = length - 1
+  while (lastIndex >= 0 && displacement[lastIndex] === 0 && load[lastIndex] === 0) lastIndex--
+
+  const series: GraphPoint[] = []
+  for (let i = 0; i <= lastIndex; i++) {
+    series.push({
+      displacement: displacement[i] / 1000, // divide displacement by 1000
+      load: load[i] / 100
     })
-    .filter((val): val is number => val !== null)
+  }
+  return series
 }
 
 interface DisplacementGraphProps {
@@ -47,22 +63,9 @@ const DisplacementGraph = ({ isCollapsed, setIsCollapsed }: DisplacementGraphPro
   const stage5_Displacement = convertPlcWordsToIntArray(allItemsPlc['D5250,500'])
   const stage5_Load = normalizePlcArray(allItemsPlc['D5750,250'])
 
-  // Merge both stages into a single chart dataset
-  const maxLength = Math.max(stage4_Displacement.length, stage5_Displacement.length)
-  const chartData: GraphPoint[] = []
-
-  for (let i = 0; i < maxLength; i++) {
-    const rawDisplacement = stage4_Displacement[i] ?? stage5_Displacement[i] ?? 0
-
-    chartData.push({
-      displacement: rawDisplacement / 1000, // divide displacement by 1000
-      stage4Load: stage4_Load[i] !== undefined ? stage4_Load[i] / 100 : undefined,
-      stage5Load: stage5_Load[i] !== undefined ? stage5_Load[i] / 100 : undefined
-    })
-  }
-
-  // Optional: sort by displacement
-  chartData.sort((a, b) => a.displacement - b.displacement)
+  // Each stage keeps its own displacement axis values; plotted in acquisition order
+  const stage4Data = buildStageSeries(stage4_Displacement, stage4_Load)
+  const stage5Data = buildStageSeries(stage5_Displacement, stage5_Load)
 
   return (
     <Flex direction="column" w="100%">
@@ -99,11 +102,13 @@ const DisplacementGraph = ({ isCollapsed, setIsCollapsed }: DisplacementGraphPro
           align="center"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <LineChart margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="displacement"
                 type="number"
+                domain={['auto', 'auto']}
+                allowDuplicatedCategory={false}
                 label={{
                   value: 'Displacement (mm)',
                   position: 'insideBottomRight',
@@ -121,16 +126,18 @@ const DisplacementGraph = ({ isCollapsed, setIsCollapsed }: DisplacementGraphPro
               <Tooltip />
               <Legend />
               <Line
-                type="monotone"
-                dataKey="stage4Load"
+                type="linear"
+                data={stage4Data}
+                dataKey="load"
                 name="Stage 4 Load"
                 stroke="#8884d8"
                 dot={false}
                 isAnimationActive={false} // 👈 Disable animation
               />
               <Line
-                type="monotone"
-                dataKey="stage5Load"
+                type="linear"
+                data={stage5Data}
+                dataKey="load"
                 name="Stage 5 Load"
                 stroke="#82ca9d"
                 dot={false}
