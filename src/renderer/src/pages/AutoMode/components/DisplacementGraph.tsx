@@ -40,12 +40,12 @@ const DisplacementGraph = ({ isCollapsed, setIsCollapsed }: DisplacementGraphPro
   const { allItemsPlc } = useGlobalContext()
 
   // Get Stage 4 Displacement and Load
-  const stage4_Displacement = convertPlcWordsToIntArray(allItemsPlc['R1000,500'])
-  const stage4_Load = normalizePlcArray(allItemsPlc['R1500,250'])
+  const stage4_Displacement = convertPlcWordsToIntArray(allItemsPlc['D4500,500'])
+  const stage4_Load = normalizePlcArray(allItemsPlc['D5000,250'])
 
   // Get Stage 5 Displacement and Load
-  const stage5_Displacement = convertPlcWordsToIntArray(allItemsPlc['R2000,500'])
-  const stage5_Load = normalizePlcArray(allItemsPlc['R2500,250'])
+  const stage5_Displacement = convertPlcWordsToIntArray(allItemsPlc['D5250,500'])
+  const stage5_Load = normalizePlcArray(allItemsPlc['D5750,250'])
 
   // Merge both stages into a single chart dataset
   const maxLength = Math.max(stage4_Displacement.length, stage5_Displacement.length)
